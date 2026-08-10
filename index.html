@@ -2414,6 +2414,10 @@
     }
   }
 
+  function cloudWarningLine(id) {
+    return isCloudTrip(id) ? "\n\n⚠ 이 여행은 지금 실시간 공유 중이에요. 여기서 되돌리면 상대방 화면의 데이터도 함께 바뀌어요." : "";
+  }
+
   function restoreFromBackup() {
     if (guardLocked()) return;
     var area = document.getElementById("restore-json-area");
@@ -2424,29 +2428,37 @@
       if (hint) { hint.textContent = "붙여넣은 텍스트가 없어요."; hint.style.color = "var(--stamp)"; }
       return;
     }
+    var data;
     try {
-      var data = JSON.parse(raw);
-      state.members = Array.isArray(data.members) ? data.members : [];
-      state.expenses = Array.isArray(data.expenses) ? data.expenses : [];
-      state.poolEnabled = !!data.poolEnabled;
-      state.contributions = (data.contributions && typeof data.contributions === "object") ? data.contributions : {};
-      state.fxRates = (data.fxRates && typeof data.fxRates === "object") ? data.fxRates : {};
-      state.fxUpdatedAt = data.fxUpdatedAt || null;
-      prevMemberIds = [];
-      syncFormWithMembers();
-      resetExpenseForm();
-      renderAll();
-      scheduleSave();
-      if (hint) { hint.textContent = "복원됐어요."; hint.style.color = "var(--brass)"; }
+      data = JSON.parse(raw);
     } catch (e) {
       if (hint) { hint.textContent = "텍스트 형식이 올바르지 않아요."; hint.style.color = "var(--stamp)"; }
+      return;
     }
+    var tripName = (currentTripEntry() || {}).name || "이 여행";
+    showConfirmModal(
+      '"' + tripName + '"의 현재 데이터를 붙여넣은 백업 내용으로 덮어쓸까요? 지금 화면의 내용은 사라져요.' + cloudWarningLine(currentTripId),
+      function () {
+        state.members = Array.isArray(data.members) ? data.members : [];
+        state.expenses = Array.isArray(data.expenses) ? data.expenses : [];
+        state.poolEnabled = !!data.poolEnabled;
+        state.contributions = (data.contributions && typeof data.contributions === "object") ? data.contributions : {};
+        state.fxRates = (data.fxRates && typeof data.fxRates === "object") ? data.fxRates : {};
+        state.fxUpdatedAt = data.fxUpdatedAt || null;
+        prevMemberIds = [];
+        syncFormWithMembers();
+        resetExpenseForm();
+        renderAll();
+        scheduleSave();
+        if (hint) { hint.textContent = "복원됐어요."; hint.style.color = "var(--brass)"; }
+      }
+    );
   }
 
   function resetAllData() {
     if (guardLocked()) return;
     var tripName = (currentTripEntry() || {}).name || "이 여행";
-    showConfirmModal('"' + tripName + '"의 모든 데이터(참여자·지출·회비·환율)를 지울까요? 다른 여행에는 영향 없어요. 이 작업은 되돌릴 수 없어요.', function () {
+    showConfirmModal('"' + tripName + '"의 모든 데이터(참여자·지출·회비·환율)를 지울까요? 다른 여행에는 영향 없어요. 이 작업은 되돌릴 수 없어요.' + cloudWarningLine(currentTripId), function () {
       clearInMemoryState();
       syncFormWithMembers();
       resetExpenseForm();
