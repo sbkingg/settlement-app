@@ -1,0 +1,2690 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>여행 정산</title>
+<link rel="manifest" href="data:application/manifest+json,%7B%22name%22%3A%22%EC%97%AC%ED%96%89%20%EC%A0%95%EC%82%B0%22%2C%22short_name%22%3A%22%EC%97%AC%ED%96%89%EC%A0%95%EC%82%B0%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22background_color%22%3A%22%23F6F3EC%22%2C%22theme_color%22%3A%22%231F2A37%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22data%3Aimage/png%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAK1ElEQVR4nO2de2hcWR3H7ySTTNLmnaZNmqZ5J81j0yRlCWwRWRdkYcGygv4n7h%2Br6B%2BKsCiCgoguRVdFxf1jK/hAXZ%2BwIhV22WVRu8KyNmmaNknznDybJpnNo5m8ZiZz/SMyTud5zvneSc4p389fYXLPPTczn5zzO%2Bf3u3dcte19FiGqZB33BRCzoUAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQg3Md9Af8jz5N74/Wf5LizpVp94Vs/fn9wBO/9%2Bmsvn6uskGpy8%2B74i9/4Ad71lWcuf/vLn5VqMjg69cLXv4d37Qi6CLS3H5icXexorpNq1dvRjAtUUVZ8/uwZ2VYXLzTmuN3BUAjs/VJnS1aW3DwwNDYFduogGk1hAyMTsk1625vxfnvbWxRaeXJz2ptqnei9SbZJ/7D0G5U5NBLolrxAXa0N2dnon9DboWihcsMIZcWFsoOfbduDo5Ngvw6ikUAD8v9YeZ7ctkZ0GOhRHcbw8a%2B3Q3rwm15Y2tzaBvt1EI0EWtvcml1clm0FfooFJ/Jb6qrV2na3NblcLqR3hflL4d8so2gkkKUWBmHzyMW2RtkYNkJx4cmGmiqkd4URSGGizyh6CaTw7vS0Sf8TRwMOYEjz/DxPa32NbKuBYY0CIEs3gRTG59LiwrrqSuUee%2BQnkUebqwt08UKj7Apg2bd%2Bf8Wn3GMm0EuguaUV3/qmbCvlWcztzn6ipV6tLdi1Wlvd5i9Lk43E1vqaooIThz8vLvtOlRZLNX%2B6r3t%2BaUWh3/Nnz3hycxUaRjh7uvzpvm7/zq5C28s9HbJNNv3bTz7Revjz4rLv/sqHCv06i6u2ve%2B4r8H6%2BXdf6rvYdtxXYRg/%2B%2B1fr/3x%2BnFfhWZTGDEOCkQgKBCBoEAEggIRCC2W8f/44Pbco%2BvwT3zsKU9ujtRJ/nNnbGbxgfjxV565nJuT5s%2Bfu79cUVaSn%2BdJfdjGlv/tf/eLd93WWNspWfn0wLd24%2Bad6FdGJmelzpAhtBDod397J%2BaVhnNVlzrl8kTDE94f/fIvggeXlxR96tmPpj3sjbffe7LrwlPpNmzycnOvvvZ6KHQg2Pv3v/p5WYHeunHzh7/4k1STo0HTKUwpqyohnOAu8MDwhEh2RbaqRGEPemB4XLbJ0fD4CNTeWCu%2BrSxiWyAYGp6cEcweXBJOilWfOXW6vFTw4Ai3dCoii0ZTgW6PToXDYakmbnd2V6toYkukEOfuuDcQDA2NeUUKn3uEBxWFBP70/NLGQ79sq6NBU4H8O7vjMwuyrQSnhpP5eSJ1FIezxn4gIBKu9rSLFpcpzV/a5VAjaJELu/rSi/F1EWXFhXkeuUzn7t7%2BusB/ao47u6KsJO1hG1v%2Bnd19y7JKiwrSLsQsy3rgWwuH7bSHlZcUyS4wH/p34vO1v37jrd9ff1fqPJlAi1XYqdLis6fL8fPk53lEPmlBSgoLSgoLxI%2BvPFXmVNcxFBWciFQrRCg8GfvKsaDpFEZMgQIRCApEICgQgdAiiA6GQoFg4r2WtOmqeEKhg7CddDWU485Ou962bTsYl5cQuZKwbadIaGRnZclW0Se8kkMODkQzJxlFi2V8Ct751Suy%2B7bfefU3f37znwl/leVyvfeHnxacyE99hjf/9cHXXrkW8%2BLfr12tqUrzBA/vwoMrX/xmst9%2B6TPPf%2B7Tz6U%2BQwzvvn/rKy%2B/KtXkiNF9ClPYQ0uxU9dSX5PWHitJIqVfIBtVf66ypCjpyl9hD1rD2zBi0F0ghSdRpMhziedQE70olM5MZkmO290pfwvRwIimKbAIugukkFWtqiirqki8pydyG%2BHW9s7k7GKCKxFTOdmthp3NdbIb0Hv7gdEpLYp%2BUqC7QJOziw/9O7Ktkg1CIvdBD45OJYzB55ZWVtfS3/SYLE2rkAIbGpsWrzE6LnQXyLZthUqGhJ/WucoKkXg8xVQlEpG0NdYmTOEpPUdB9/nL0l8gSymQTBiICN7HniLsEJlP3e7srtaGmBezXK7utkaR3qPRP4K2jBBIoRivoaYqPg8qUgMUCIaGJ7zglcRHWk211bK5z3A4fPueRs9CTIYBAg1PzO4HAlJNXC5Xd9ynKDKJDE94k21pWpY17l3wb6e/DT6%2BI4UAaMw7v727J9vq6DFAoGAodGc86aiQjJjPrKSwoK46/dMIU%2B8ahMUCsq7WhpiHVikEQPov4A8xQCBLaTsxpkhZsGIwbdghMovFVzwqPMrOiADIeowFilkNidQsh217cDRN2CF4JdHGCK7%2BYqBATnL7nlqN/f9XQyJ3TUzMLGxtp9lzujsxsx8Ipj1V9JylEADNL62K7DnpgBkCbe/ujXnnZVtFFvOeXKH7tkT2XYKh0F2BgKw7asfysUyBRTBDIAvLqna11rsFvoVDcJUuklWtKCuOpO5VbsOgQI6jkFWNPMUS30J85DCZpJjaM0A5AjmPwnZifp6nreG8JTYGLC77Vj5cFzmtYEB22Okl%2BeFnfXPLuyDxlIjjxRiBFJ9j39GS5XLF5xbiEZ81tnf37k2nD8gOQx%2BVAEjXu5gTYoxAlmX1j0gPQr0dzaJFZDJTpMhwWFddWVpc%2BBg8iz41Jgl0S/4h7T1tTYKTiNTHJjhcXe7tuNAg/yx6Q/agDzFJoAH5Eai0uPD5j38k7WEbD/1SYYdgRP/CJ5%2BV/SIOI4rIojFJoPml1dW1DdlWLXXn0h4zMDJhJ7%2BRIx7BOFek6xiMKCKLxiSBrIxtkCiEHRl64pMRRWTRmCZQZh50orDJlKErMSuCtiiQpRp2ZOKLS00pIovGMIEmZoRKuqQYGps%2BOJDL1FqWdX/Ft%2BwT2ngUx5QismgMEyhs24P3HI4SlOMqxwMysxbwhxgmkJWBWUz5hP13HY6jjQuALBMFcjb4CIfDQ6phh0haXgoKdBSkrnuXZXRqbmdvX63t9LyT38BtUBFZNOYJFAgKlXQJgsQxtm07OGaYOPxYJgpkObqJB35sDgZkBhWRRWOkQP3OvdegAfpcyXFhpEC3kzz/QJbZxeW1zS3kDCOTM7uqIVQ065tbUl81pA9GCuTf2R33Sj/HPh6FAqMYDg7CQ2PT%2BJWYVUQWjZECWQ6FQQoFRomuxIGpx9AI2jJYICfecYUCo3gc2Q3KRGbtaDBWIPgd961vzi%2Bt4leCV/AYV0QWjakC%2BdY3Y74lUxanVj34x6%2BWzdUEUwWyYAMcDDvAxbxxRWTR6P6caKI5Bo9ARAcoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEYj/Ausut47PgG0sAAAAAElFTkSuQmCC%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22data%3Aimage/png%3Bbase64%2CiVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAIAAAB7GkOtAAAdTElEQVR4nO3dW2hd2XnA8XWO7pZ8ky3bsi3LlmRbl8S2ZFq38zBJG0LS2wR6g9CUlnkopX3oQF9Km1IKeU9KW0ophEICLW0hzZSGwBBIQgjNxZKlse7SkXWXLFn3u47O6YMVR7GPpKNz9l7rW/v7/56GmfHZa85I%2B7/32pcVq21%2BZAAA%2BsRdDwAA4AYBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKBUoesB6NJYV/O5dz7pehTGGDMzv/APX/1v16PIXVlpyV/98e%2B5HsW%2Bb3z3B99v73Y9ity91dbyq28/cj0KY4z56vsf9CXGXY9CEQJg1eLK2jufeMv1KIwxJpnc%2B5f/%2BMb2zo7rgeTofmO9kG/SGBOPx70OwG/80i/%2B2sd/wfUojDHm77/6NddD0IUpIKtm5xennr9wPQpjjCksLLh395brUeSureW26yH8lKjB5KCt5Y7rIRhjzNTz%2Bdn5Rdej0IUA2NbRM%2Bh6CPtamz3ebbVJGvzVSxcuXzzvehQ5unzxfHVVpetRGGNMe/eQ6yGoQwBsa%2B%2BWEgBR%2B9ATKSiIf/SOrNMXf2sq58egvWfA9RDUIQC2tYs5A7jfVB%2BPe/kD0FRfW1Za4noUP%2BOht7NAD2XM/xhjOjgDsM7L33%2BvJcanl1fXXY/CGGPKy0rv3LzuehS5kHPQ%2Boq/ZwCtzQ2uh2CMMUura4mJadejUIcA2JZOp5/0SjnS8fTqpZB91kENtddOl59yPYoTO11%2Bqr72mutRGGPMk56hdDrtehTqEAAH5MwCCTyUzobAYcdjsQdN9a5HcWKtzQ3xWMz1KIwxpr1HylGRKgTAATnXgX2cuLh57cr5s6ddjyIDH79MOWNu7%2BYKsAMEwIGeoVEhT2BVVZ6tqa5yPYqTETtt5eN1YCFf5vbOTs/wqOtRaEQAHNhNJp8OPHM9in1yjgGzJHD%2B56WW27eKi3x6tL64qLCl4abrURhjzIcDI8nknutRaEQA3OAyQM7EFkvO/jRLcoolZ1JUGwLghqAAyJgEyNLF86LnrPz6MuXMWcn5ddCGALjR2TucknHT281rV86dqXA9imwJ38OKPTvJSMhoU%2Bl0V1/C9SiUIgBurG1sDoxMuB7FPo9mgYTssw7zoKkhJuOuymPJuW91YGR8bWPT9SiUIgDOyHkrnPDD6oPkzFpkdKbiVIOM56qOJefJNS4AOEQAnBEUANmH1a948e4KgU8pZyTnXKqDR8DcIQDOPBZz4NNUX1taUux6FMe73%2BjB2%2Bt8qamc0z6uADsk/dcpwuYWliZn512PwhhjCgri9%2B7WuR7F8eTss47gxSCNmDOViZm5uYUl16PQiwC4JOfxdy%2BOW%2BXMWhzhysVKIeurHOHqpQtXLooYJBcA3CIALsl5AZb841aP1rAUssLiEeT872b%2Bxy0C4JKc68D3xE%2BvN9fXlhR7cKHCiJldOYKccyk5vwI6if6dj7zE%2BPTSyprrURhjzKnSksa6GtejOIoXk1QvyR%2BqkBEuLq%2BOTMy4HoVqBMCxDkGLw4ieuJAza3Gs%2BhtXz1SIuMU%2Bo7Ony%2Btqql2PwhhJP/xqEQDHOsRcBGuTPXHxoEn08A6KxWKtgkcr53Fl5n%2BcIwCOPRbzOyBnXvhNdTXVHr2wyMj%2BMoXM/xhJj8KoRQAc6x0e3doWsTjMhXNnbly97HoUmXk0//OS5Pk0IV/m1vZOL4vAuEYAHEsm97r6pbwKUewskOQD6oxabteWFBe5HkUGJcVFzQ21rkdhjDFd/Ym9vZTrUWgXq21%2B5HoMEfeF99595xNvuR4F4Jn3v/X9z3/py65HEXGcAQCAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFKsCBa6W9evXDx/Nst/ufrShS%2B8926o48nS9s7un/7t36XTaSdbP1NR/sW//JOwt/KVr38QM%2BZzn/lk2Bv6z29%2B55vf/WHYWznM73/mkx9/9MDV1g/64r/%2B19OBkSz/5fnF5ZGJmVDHg0LXA4i%2BkYmZ7H%2BO47HYX/zRZytOlYU6pGyUFBe9WFoZHptysvWP/dw9C1v532//XywWsxCAc6crfvRhf9hbOcyfv/u7rjb9mq998L2llTXXo8BPMQUkSyqd7uwddj2KfQ9b7rjadFv4m97Y2u5LjPcOj21sbYe9rbYWZ4vanyotaayrcbX1gxLj0%2Bz9pSEA4rT3DLoewj6Huy0Lm%2B7sG06lUqlUqqsv9OJeOHfmxtXLYW8lowdNDfG4iF/zDjE/2HhFxE8GDpITgNZmNwEoKS5qbqgNeyvt3QM/%2BQsbX3hbc4OFrbzJ1f/EN9n5nnEiBECcpwMju8mk61EYY0x1VWV1VaX97X70Tl1RYehXp17tj%2BwU18Kk1iHblRKAxwRAHgIgzvbO7tPBZ65Hsc/JbsvCPiuZ3Ovq378dpas/kUzuhb1FJzviwsKCe3dv2d/um2bnF6eez7seBV5HACTqEHOs5GS3ZWGjPcOj2zs7L/96a3und3g07C3eqL6U/d3AQWlpuFlSXGx5oxlxAUAmAiCRnMsAbdZnkOPx%2BP3G%2BrC38uoCwEuPrXzhrdYvA8i5AMD8j0wEQKKOnqGUoyewXlNXU33udIXNLd69VVNeVhr2Vl7bH1m6Dmx9Pu2hmAsAco5pcBABkGh1fWNodNL1KIwxJhaLPbB73Gph/iedTj/pHTr4dzp6Bi0882x5dxyLxR40ubn16DVyfp7xGgIglJw5U8uXASzsJRPj08ur6wf/zvLqemJiOuzt3rl53eYz3vU3rp49XW5tc0fo6Bly9U4RHI0ACCVnztTyZQALB62Pf/YCwEsWZoHi8fi9xrqwt/KK/es3h2H%2BRywCIJScp2aa62tLSyzdSXLj6mULt8pk/G7tfOE2364h5wmA9kzFhQQEQKjnLxYnZ0XcN11YWHDvrqXjVjuz5Bmn1%2BzspGwelQsJwPbObvdg6HfZIje8Djp0X3jv3Xc%2B8ZbrUQCeef9b3//8l77sehQRxxkAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoxYpgobt1/Ur%2B69x%2B9G7de3/wW4GMJ09Tz1/8dXDrNMVisX/8mz8rKS4K6gMz%2BmFX3z//%2B/%2Bc6I/8zqc/9um3fz6k8bzyT//2/o8/7A/q037l7Ue//em3g/q0fHzl6x98%2BwdP8vyQ%2BcXlkYmZIIaDQxW6HkD0jUzM5P9zPDQ2JSQAV6oqe4fH1jY2A/m0htprYe/9jTHf%2B/GHPzrhfvbcmQoLASgrLTnpwI7w2V//5aA%2BKk/f%2BM4PugefuR4FjscUkB8Wl1eFHA3FY7H7TfVBfZqdRdIfZ1oF/pg/8tS/NeJbLa44f4TNre2%2BxJjrUSArBMAb7d02dknZeBjcjqa1uSGojzrM1vZO7/DoSf/UwvLq6ORsGOM5qLm%2BtqS4OJCPqr12%2BcK5M4F8VJ66%2BhN7eynXo0BWCIA32rtPfBgbkraWOwI/6jBd/Ylkci%2BHP/i4J/TiFhYW3Lt7K5CPetgc%2BjeZJTk/qDgWAfBG%2B8nnMULykTu3iosCuHp0%2BeL56qrK/D/naDl/b3Z2ZEHN27S1iJj/MZJ%2BUHEsAuCNydn55y8WXY/CGGOKiwpbGm7m/zl2LgB05LoftxOAoL4EIRcA9vZSXf0J16NAtgiAT%2BScXAdyvGnhoDWVSnX2Def2Zydm5uYWlgIdTgb3Guvi8Xx/Dasqz9ZUVwUynjz1JcY2t7ZdjwLZIgA%2BeSwoAAHMOFs4A%2BhLjG/ksT%2By8IVXnCq7c/N6nh/SJucCAPM/XiEAPpHz29Xa1BCPxfL5hIrysvraa0GN5zB53jpl6WbQvM%2BE5FwA6BDzI4psEACfDI1OrqxtuB6FMcZUlJfdzu%2B4Nf%2BEZKO9Zyi/P27nOnC%2B98LKCYCcWUpkgwD4JJ1Od/TmtUcLUJ47HTsXLfM8ILVT3DynwvKPcVDGpmYXllddjwInQAA8I%2BcUO889%2BMPwD1pHJ2dfLK3k8wl2iltVee76ldwv4T5otHEulQ0516iQJQLgGUHPA%2BexBy8qLGwO4kbSowUygWPnC8%2BnpnLmf%2BQcnSBLBMAz3YOj2zs7rkdhTH7HrR%2B5fdPCO%2BACmY%2B29TRA7pcBLJxLZSnPKy6wjwB4ZjeZ/HBgxPUo9uV87NlqZZ8VyAFp99Czre3Qi5vzGUBxUWHL7WBeJpGnF0srY1Ohvz0JwSIA/pFzo0XOAbDwBMD84vLY9PP8PyeZ3LPwaGtdTfW5MxU5/MGgXsuRP%2BZ/fEQA/CMnALm9gCwWiz1oCv0loB3BTUdYuhk0p%2B/Ewtv0ssT8j48IgH86%2B4ZTKRGv2629drny7OmT/qn6G1fPVJwKYzwHBXjx1tJb4XI6ncrn4kGwOAPwEQHwz/rmVv/IuOtR7MthFsjOXSsBHpB29g1beMF9DqssxGOxB40iAsAiMJ4iAF6SMwuUw2y%2BhQsAwTZyc2u7N/y9W9PJF4e5c%2Bt6RXlZSOM5ETuNROAIgJfkPHGTwxy0hWeAO3sDniWz8DRADovDyLkAEOAVF9hEALwk53Gwxrqa8rLS7P/9KxcrJS8Ccxg7b4U7aRrtLKiQDTmvKcSJEAAv2VmxNhvxePx%2B4wnWiLd0ASDoM6SOnqF0Oh3sZ77ppF8Oi8AgTwTAVxZWrM3SiXZbFg5ak8m9wJ%2BVW1pdS0xMB/uZb7rfWJ/94jA3qi9VVZ4NdTxZ6mURGG8RAF91dEuZdT3RcWj%2Brz4%2BVvfQszDelmHhwnt5WWn2i8MIOfw33ADqMwLgq3YxZwD37t4qKszqYdTT5acsLAIT0v7I0kuBsj6d4h1wyB8B8NX4tI0Va7NRUlzc3FCbzb/Z2mzjxcUh3SJl58J79lNkgt4BJ%2BaeNJwUAfCYnFsvsjwatTBrkU6nn4TzBv/puYXpuYUwPvmgLL%2BiC%2BfO3Lh6OezBZGN0kkVgPEYAPCbnyCvLG9ItvLcgMT69vLoe0odbuBm0qvJsNi/ZljP/I%2BcoBDkgAB6TE4DWpobYcXM7dl5cHOr%2ByM51l2x27pIeAZPyQ4gcEACPDT6bWFvfdD0KY4w5U3Gq/sbVo/%2Bdlts2XlwcahRtLQ6TRQDEvANOzlEIckAAPJZKp5/0SbkZ9NjjVjv7rFAv1SbGp5dW1sL7/JeOvQxQXlZ691ZN2MPIxoullUAWXYArBMBvco6/Hh43KWHhCvDMfOjXaS1Med%2B6fuXoxWHuN53gebFQMf/jOxE/RsiZoLfCHbl/t7MIjIUcSpgFOra11rAIjO8IgN%2B6B0d2dpOuR2GMMZcvnr966eJh/7Sh9pqNRWDCPyB9bOVpgKPPlgS9A07MSwmRGwLgt53d5FMxa8Qf8WiShTdAGCuH573DYxvhv/fmiOslRYWFH7kjYhX4ja3tvoSUhYmQGwLgPTlHYUcct1o4aF1Z2xgemwp7K6lUqrNvOOytNNXXlpZkXhym5XZtSXFR2APIRpeYpUmRMwLgvcdiLsQdcSOQhQeXOnptvLHZ2Fscpi7jP5L0BAAXALxHALzX2TucsrLjO1ZdTXXG21euXKy8cjH0RWCs3ZFiaY34Q2aB5FwAsHM5BKEiAN5b29gcGJlwPYp9GXdPthaBsbQ/6uof2U2GfuE943xaPBazczXlWHt7qcAXXYB9BCAK5FwGyLivt3DQur2z2z04GvZWfrKtnZ6h0LeVcXGYhtprp8tDv5kqGywCEw0EIArkvJAr4wy1hTOApwM2jspfsfBWuIyP%2B8p5BxyPgEUDAYgCOc8DN9XdKCstOfh3Tpcf/5qg/FlOoJ3NvXkzqJwrwHJ%2B5JAPAhAF84vLQl7JUlAQf%2B32ldbm418Umj/LAejoGbJw4f3NywBy3gHHGUA0EICIkPML%2Bdo0hYULAKl0urM39HvzD1pd3xganQx7K68F4Nrli5cunA97o9lgEZjIIAARIeeU/LU31bSGP209MDKxtmH7tdgWvvCqyrM11T9dHEbQ/I%2BYow3kiQBEhJy3wt27W1dYWPDyr4uLClsaboa9RSc3QdnZ6MGTABYBRuAIQESMTc3OLy67HoUxxpSWFDfV768Rb2cRGCePpNp5DOrgBBq3ACFwBCA65Dya//Anuy07B612Vmp8zdzC8vj0XNhbebXTP3/29M1rV8LeXDZYBCZKCEB0yHkc7NW8v4VFYMan5%2BYW3Jz6WAjPzWv7i8PIeQMEh/9RQgCiQ85lgJe3fsZisQdN9WFvy%2BH%2ByObiMHLmf%2BT8mCF/BCA6BkbG7d8Mk9G50xV116vtvLfA4QVJO7vCl2dRnAEgDAQgOlLpdFdfwvUo9rW13Lazz3J4S6KdC%2B8PW26fKi1prLsR9oaywSIwEUMAIkXOG3rbWm5bmLVYXF59NjkT9laOYOHCe2PdjUf3mwoKRPyqsghMxIj4qUJQ5Dyh09Zyx8KLi53/91oobmFhwR/%2B5qfC3kqWeAIgYkK/Rxs2vXwpZlGh%2B/%2Bt1VWhrwBjBOyP7D8O5pbz4iJYnAFEyvbO7tPBZ65HYY/zC5IDIxNr6yIuvFuwt5fq6pdykQmBIABR4/yg2JrNre3exJjbMaTS6Sd9Up6/C1tvYmxre8f1KBAkAhA1zg%2BKrensG97bc39BUk9x5TxpiKAQgKix86p6CYS8%2BkLPg1FCvnAEiABEjZ1X1Usg5J7X7sGR7Z1d16OwgSvA0UMAIkjDpIScC5I7u8mnAyOuRxG60cnZRRaBiRwCEEEa5mp7h0flXJDUcGj82MUrVxE2AhBBGmalRe1zhUxGhaqjmwsAEUQAImhuYWliJvRX1bslapqrszf6L0jQc3eZKgQgmiL/6yrqDGB9c6t/JMqvSJtfXGYRmEgiANEU7VmgkYmZpZU116P4GaLOSALHDaBRRQCiKer7I3H/ddG%2BDCDqfAsBIgDR9GxyZiG6N%2B0JPL%2BhuPARAYisCO%2BSBN7nuuB6ZYLwsAhMhBGAyIrqafvcwtLk7LzrUWQQ1eJ2sghMdBGAyBJ4mBwIgfM/L4kdWJ46IvrfBUMAIqwvMb6xte16FMETOx8d1eJG9VQShgBEWCqV6uwbdj2K4ImdaZmcnZ%2BdX3Q9ioDJeecSwkAAoix6x6Rr65uDzyZcj%2BJQ0TtYFvXOJQSOAESZ2IPlnD3pE73aQfSeBohe0nAQAYiyrv6R3WTS9SiC1C77kdToFZdngKONAETZ9s5Oz9Co61EESfik1vDY1PLquutRBIkzgGgjABEn9p6ZHOzsJrsHn7kexVHS6fST3ugcMj%2BbnGERmGgjABEXpZvTu4eeyV98MUpfOIf/kUcAIq6jZzAt%2BKrpiXgxwx6l68AsAhN5BCDiVtY2hsemXI8iGF5MZ0XpvkkvvnDkgwBEnxcHzsdKp9Ne3JGSTO5F48kpFoHRgABEXzQmJYZGJ1fXN1yPIivR%2BMK9yC3yRACiLxqX8jz6r4jGKZdHXzhyRgCib3Z%2Bcer5C9ejyJdHe9XOvuG9Pe/fn8wFAA0IgAoe7T0P49EB6db2Tu%2Bw38/fsQiMEgRAhfYev2elp5579qLNH3t%2BGYBFYJQgACr4fgbQ7tsN6b5/4SwCowQBUCExPr20suZ6FLnz7gzG9%2BfvPJpwQz4IgBZe/0p790jq8up6Ynza9ShyxCIwehAALfydlFhaXUtM%2BLcz9fdpgCg9zIyjEQAt/D0DeNIz5ON0ir/F9fdHBSdFALToHR7d9HONeE/3pP6eAfAMsB4EQAt/J3Y9PSCdnV%2Bcej7vehS58PQLRw4IgCI%2BHkpv7%2Bz0ePtQlY9rA7AIjCoEQBEfJyU6%2BxLJ5J7rUeTIx%2BJy%2BK8KAVCkq9%2B/nanX89HCVzDOyLs7bpEPAqCIj%2B%2Bo8XEf%2BsrIhH/TKd49c4d8EABd2r06oE6lUp19w65HkRe/ZlTmF5fHp%2BdcjwL2EABd/Dqg7kuMb/h56%2Borfl0H9nrCDTkgALp0ePVQVQReSe9Xcf06X0H%2BCIAufr1Wwa/D54z6EuPrm1uuR5EtH29bQj4IgDoe/ZJH4AzAo8sY65tb/SMsAqMLAVDHlwCMTc2%2BWFpxPYoA%2BPKFd/UnWARGGwKgji%2Bz0n7dsHQEXwLAIjAKxWqbH7keAwDAAc4AAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEoRAABQigAAgFIEAACUIgAAoBQBAAClCAAAKEUAAEApAgAAShEAAFCKAACAUgQAAJQiAACgFAEAAKUIAAAoRQAAQCkCAABKEQAAUIoAAIBSBAAAlCIAAKAUAQAApQgAAChFAABAKQIAAEr9P78w7O3aIIaIAAAAAElFTkSuQmCC%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%5D%7D" />
+<meta name="theme-color" content="#1F2A37" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="여행정산" />
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAAK1ElEQVR4nO2de2hcWR3H7ySTTNLmnaZNmqZ5J81j0yRlCWwRWRdkYcGygv4n7h+r6B+KsCiCgoguRVdFxf1jK/hAXZ+wIhV22WVRu8KyNmmaNknznDybJpnNo5m8ZiZz/SMyTud5zvneSc4p389fYXLPPTczn5zzO+f3u3dcte19FiGqZB33BRCzoUAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQg3Md9Af8jz5N74/Wf5LizpVp94Vs/fn9wBO/9+msvn6uskGpy8+74i9/4Ad71lWcuf/vLn5VqMjg69cLXv4d37Qi6CLS3H5icXexorpNq1dvRjAtUUVZ8/uwZ2VYXLzTmuN3BUAjs/VJnS1aW3DwwNDYFduogGk1hAyMTsk1625vxfnvbWxRaeXJz2ptqnei9SbZJ/7D0G5U5NBLolrxAXa0N2dnon9DboWihcsMIZcWFsoOfbduDo5Ngvw6ikUAD8v9YeZ7ctkZ0GOhRHcbw8a+3Q3rwm15Y2tzaBvt1EI0EWtvcml1clm0FfooFJ/Jb6qrV2na3NblcLqR3hflL4d8so2gkkKUWBmHzyMW2RtkYNkJx4cmGmiqkd4URSGGizyh6CaTw7vS0Sf8TRwMOYEjz/DxPa32NbKuBYY0CIEs3gRTG59LiwrrqSuUee+QnkUebqwt08UKj7Apg2bd+f8Wn3GMm0EuguaUV3/qmbCvlWcztzn6ipV6tLdi1Wlvd5i9Lk43E1vqaooIThz8vLvtOlRZLNX+6r3t+aUWh3/Nnz3hycxUaRjh7uvzpvm7/zq5C28s9HbJNNv3bTz7Revjz4rLv/sqHCv06i6u2ve+4r8H6+Xdf6rvYdtxXYRg/++1fr/3x+nFfhWZTGDEOCkQgKBCBoEAEggIRCC2W8f/44Pbco+vwT3zsKU9ujtRJ/nNnbGbxgfjxV565nJuT5s+fu79cUVaSn+dJfdjGlv/tf/eLd93WWNspWfn0wLd24+ad6FdGJmelzpAhtBDod397J+aVhnNVlzrl8kTDE94f/fIvggeXlxR96tmPpj3sjbffe7LrwlPpNmzycnOvvvZ6KHQg2Pv3v/p5WYHeunHzh7/4k1STo0HTKUwpqyohnOAu8MDwhEh2RbaqRGEPemB4XLbJ0fD4CNTeWCu+rSxiWyAYGp6cEcweXBJOilWfOXW6vFTw4Ai3dCoii0ZTgW6PToXDYakmbnd2V6toYkukEOfuuDcQDA2NeUUKn3uEBxWFBP70/NLGQ79sq6NBU4H8O7vjMwuyrQSnhpP5eSJ1FIezxn4gIBKu9rSLFpcpzV/a5VAjaJELu/rSi/F1EWXFhXkeuUzn7t7+usB/ao47u6KsJO1hG1v+nd19y7JKiwrSLsQsy3rgWwuH7bSHlZcUyS4wH/p34vO1v37jrd9ff1fqPJlAi1XYqdLis6fL8fPk53lEPmlBSgoLSgoLxI+vPFXmVNcxFBWciFQrRCg8GfvKsaDpFEZMgQIRCApEICgQgdAiiA6GQoFg4r2WtOmqeEKhg7CddDWU485Ou962bTsYl5cQuZKwbadIaGRnZclW0Se8kkMODkQzJxlFi2V8Ct751Suy+7bfefU3f37znwl/leVyvfeHnxacyE99hjf/9cHXXrkW8+Lfr12tqUrzBA/vwoMrX/xmst9+6TPPf+7Tz6U+Qwzvvn/rKy+/KtXkiNF9ClPYQ0uxU9dSX5PWHitJIqVfIBtVf66ypCjpyl9hD1rD2zBi0F0ghSdRpMhziedQE70olM5MZkmO290pfwvRwIimKbAIugukkFWtqiirqki8pydyG+HW9s7k7GKCKxFTOdmthp3NdbIb0Hv7gdEpLYp+UqC7QJOziw/9O7Ktkg1CIvdBD45OJYzB55ZWVtfS3/SYLE2rkAIbGpsWrzE6LnQXyLZthUqGhJ/WucoKkXg8xVQlEpG0NdYmTOEpPUdB9/nL0l8gSymQTBiICN7HniLsEJlP3e7srtaGmBezXK7utkaR3qPRP4K2jBBIoRivoaYqPg8qUgMUCIaGJ7zglcRHWk211bK5z3A4fPueRs9CTIYBAg1PzO4HAlJNXC5Xd9ynKDKJDE94k21pWpY17l3wb6e/DT6+I4UAaMw7v727J9vq6DFAoGAodGc86aiQjJjPrKSwoK46/dMIU+8ahMUCsq7WhpiHVikEQPov4A8xQCBLaTsxpkhZsGIwbdghMovFVzwqPMrOiADIeowFilkNidQsh217cDRN2CF4JdHGCK7+YqBATnL7nlqN/f9XQyJ3TUzMLGxtp9lzujsxsx8Ipj1V9JylEADNL62K7DnpgBkCbe/ujXnnZVtFFvOeXKH7tkT2XYKh0F2BgKw7asfysUyBRTBDIAvLqna11rsFvoVDcJUuklWtKCuOpO5VbsOgQI6jkFWNPMUS30J85DCZpJjaM0A5AjmPwnZifp6nreG8JTYGLC77Vj5cFzmtYEB22Okl+eFnfXPLuyDxlIjjxRiBFJ9j39GS5XLF5xbiEZ81tnf37k2nD8gOQx+VAEjXu5gTYoxAlmX1j0gPQr0dzaJFZDJTpMhwWFddWVpc+Bg8iz41Jgl0S/4h7T1tTYKTiNTHJjhcXe7tuNAg/yx6Q/agDzFJoAH5Eai0uPD5j38k7WEbD/1SYYdgRP/CJ5+V/SIOI4rIojFJoPml1dW1DdlWLXXn0h4zMDJhJ7+RIx7BOFek6xiMKCKLxiSBrIxtkCiEHRl64pMRRWTRmCZQZh50orDJlKErMSuCtiiQpRp2ZOKLS00pIovGMIEmZoRKuqQYGps+OJDL1FqWdX/Ft+wT2ngUx5QismgMEyhs24P3HI4SlOMqxwMysxbwhxgmkJWBWUz5hP13HY6jjQuALBMFcjb4CIfDQ6phh0haXgoKdBSkrnuXZXRqbmdvX63t9LyT38BtUBFZNOYJFAgKlXQJgsQxtm07OGaYOPxYJgpkObqJB35sDgZkBhWRRWOkQP3OvdegAfpcyXFhpEC3kzz/QJbZxeW1zS3kDCOTM7uqIVQ065tbUl81pA9GCuTf2R33Sj/HPh6FAqMYDg7CQ2PT+JWYVUQWjZECWQ6FQQoFRomuxIGpx9AI2jJYICfecYUCo3gc2Q3KRGbtaDBWIPgd961vzi+t4leCV/AYV0QWjakC+dY3Y74lUxanVj34x6+WzdUEUwWyYAMcDDvAxbxxRWTR6P6caKI5Bo9ARAcoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEQgKRCAoEIGgQASCAhEICkQgKBCBoEAEggIRCApEICgQgaBABIICEYj/Ausut47PgG0sAAAAAElFTkSuQmCC" />
+<style>
+  :root {
+    --paper: #F6F3EC;
+    --ink: #1F2A37;
+    --ink-soft: #5B6472;
+    --line: #D8D2C4;
+    --stamp: #B5482E;
+    --stamp-soft: #F1DDD3;
+    --brass: #8A6D3B;
+    --brass-bg: #EFE6D3;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 24px 18px 80px; }
+  .mono { font-family: "SFMono-Regular", Menlo, Consolas, monospace; }
+  .header {
+    background: var(--ink);
+    border-radius: 16px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .header-top { padding: 18px 18px 14px; display: flex; justify-content: space-between; align-items: flex-start; }
+  .header-eyebrow { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #C9CFD8; margin-bottom: 4px; }
+  .header-title { font-size: 22px; color: #fff; font-weight: 700; }
+  .header-rule { border-top: 1px dashed rgba(255,255,255,0.25); margin: 0 18px; }
+  .header-stats { display: flex; justify-content: space-between; padding: 10px 18px; font-size: 12px; color: #C9CFD8; }
+
+  section { margin-bottom: 28px; }
+  .section-title {
+    display: flex; align-items: center; gap: 6px; margin-bottom: 4px;
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 700; color: var(--ink);
+  }
+  .section-title .dot { color: var(--stamp); }
+  .section-sub { font-size: 13px; color: var(--ink-soft); margin: 0 0 12px; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px; font-size: 14px; font-weight: 500;
+    border: 1px solid var(--line); background: transparent; color: var(--ink-soft);
+    cursor: pointer; user-select: none;
+  }
+  .chip.member-chip { background: #fff; color: var(--ink); padding-right: 8px; }
+  .chip.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+  .chip.active.brass { background: var(--brass); border-color: var(--brass); }
+  .chip .x-btn { border: none; background: none; padding: 0; margin-left: 2px; cursor: pointer; color: inherit; font-size: 13px; line-height: 1; opacity: 0.6; }
+
+  .row { display: flex; gap: 8px; }
+  input[type=text], select {
+    padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line);
+    background: #fff; font-size: 14px; outline: none; color: var(--ink); width: 100%;
+  }
+  input:focus, select:focus { box-shadow: 0 0 0 2px rgba(31,42,55,0.15); }
+  .btn {
+    border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600;
+    padding: 10px 14px; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-dark { background: var(--ink); color: #fff; }
+  .btn-stamp { background: var(--stamp); color: #fff; width: 100%; padding: 12px; }
+  .btn-brass-soft { background: var(--brass-bg); color: var(--brass); white-space: nowrap; }
+  .btn-toggle { font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--ink-soft); cursor: pointer; }
+  .btn-toggle.on { background: var(--brass); border-color: var(--brass); color: #fff; }
+
+  .card { border: 1px solid var(--line); background: #fff; border-radius: 10px; padding: 10px 14px; }
+  .card-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+  .muted { color: var(--ink-soft); }
+
+  .pool-box { background: var(--brass-bg); border-radius: 10px; padding: 12px; }
+  .pool-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; }
+  .pool-line:last-child { margin-bottom: 0; }
+  .pool-line input { width: 110px; text-align: right; }
+
+  .stack { display: flex; flex-direction: column; gap: 8px; }
+  .space-y { display: flex; flex-direction: column; gap: 10px; }
+
+  .expense-item { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .expense-item.editing { border-color: var(--brass); box-shadow: 0 0 0 1px var(--brass); }
+  .expense-item .desc { font-size: 14px; font-weight: 600; }
+  .expense-item .meta { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  .expense-item .right { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .del-btn { border: none; background: none; cursor: pointer; color: var(--ink-soft); font-size: 15px; padding: 2px 4px; }
+  .reorder-col { display: flex; flex-direction: column; gap: 3px; flex-shrink: 0; }
+  .reorder-btn {
+    border: none; background: var(--brass-bg); color: var(--brass); width: 22px; height: 22px;
+    border-radius: 6px; font-size: 10px; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .reorder-btn:disabled { opacity: 0.25; cursor: default; }
+
+  .transfer-card { display: flex; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .transfer-left { flex: 1; background: #fff; padding: 12px 14px; display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; flex-wrap: wrap; }
+  .transfer-right { padding: 12px 14px; display: flex; align-items: center; font-weight: 700; font-size: 14px; }
+  .badge { font-size: 10px; padding: 2px 7px; border-radius: 999px; background: var(--brass-bg); color: var(--brass); margin-left: 4px; }
+
+  .form-error { color: var(--stamp); font-size: 12px; text-align: center; margin: 8px 0 0; min-height: 16px; }
+  .form-success { color: var(--brass); font-weight: 700; font-size: 13px; text-align: center; margin: 8px 0 0; min-height: 16px; }
+  .footer-note { text-align: center; font-size: 11px; color: var(--ink-soft); margin-top: 8px; }
+  .empty-note { border: 1px solid var(--line); background: #fff; border-radius: 10px; padding: 22px; text-align: center; font-size: 14px; color: var(--ink-soft); }
+  .cat-row { margin-bottom: 12px; }
+  .cat-row:last-child { margin-bottom: 0; }
+  .cat-row-top { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+  .cat-bar-track { height: 8px; border-radius: 999px; background: var(--brass-bg); overflow: hidden; }
+  .cat-bar-fill { height: 100%; background: var(--brass); border-radius: 999px; }
+  .toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(12px);
+    background: var(--ink); color: #fff; padding: 11px 18px; border-radius: 999px;
+    font-size: 13px; font-weight: 500; box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+    opacity: 0; pointer-events: none; transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 1000; max-width: 90vw; text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  textarea.backup-area {
+    width: 100%; min-height: 90px; border-radius: 10px; border: 1px solid var(--line);
+    background: #fff; font-family: "SFMono-Regular", Menlo, Consolas, monospace; font-size: 12px;
+    padding: 10px; color: var(--ink); resize: vertical;
+  }
+  .copy-hint { font-size: 11px; color: var(--brass); margin: 4px 0 0; min-height: 14px; }
+
+  .print-only { display: none; }
+  @media print {
+    body { background: #fff; }
+    .wrap { max-width: 100%; padding: 8px; }
+    .no-print, .toast, .del-btn, .reorder-col, .x-btn, button, input, select, textarea { display: none !important; }
+    .chip.member-chip { display: inline-flex !important; border: 1px solid var(--line) !important; }
+    .print-only { display: block !important; }
+    .header { background: var(--ink) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .card, .transfer-card, .expense-item, .pool-line { break-inside: avoid; }
+    section { break-inside: avoid-page; margin-bottom: 16px; }
+    .expense-item .meta { color: var(--ink-soft) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div class="header-top">
+        <div>
+          <div class="header-eyebrow">Travel Settlement</div>
+          <div class="header-title">여행 정산</div>
+        </div>
+      </div>
+      <div class="header-rule"></div>
+      <div class="header-stats">
+        <span id="stat-members">참여 0명</span>
+        <span id="stat-total" class="mono">총 지출 0원</span>
+        <span id="stat-save">자동 저장됨</span>
+      </div>
+      <div id="stat-pool-breakdown" class="header-stats" style="display:none; padding-top:0;"></div>
+    </div>
+
+    <div id="startup-banner" class="no-print" style="display:none;"></div>
+
+    <section class="no-print">
+      <div class="section-title" style="justify-content: space-between;">
+        <span><span class="dot">●</span>여행</span>
+        <button class="btn-toggle" id="trip-panel-toggle-btn">열기</button>
+      </div>
+      <p class="section-sub" id="trip-current-sub"></p>
+      <div id="trip-panel-body" style="display:none;"></div>
+    </section>
+
+    <section class="no-print">
+      <div class="section-title"><span class="dot">●</span>참여자</div>
+      <div id="member-chips" class="chip-row"></div>
+      <div class="row">
+        <input type="text" id="member-name-input" placeholder="이름 입력" />
+        <button class="btn btn-dark" id="add-member-btn">추가</button>
+      </div>
+      <div id="retro-prompt" style="display:none; margin-top:10px;"></div>
+    </section>
+
+    <section class="print-only" id="print-members-section">
+      <div class="section-title"><span class="dot">●</span>참여자</div>
+      <div id="print-member-list" style="font-size:14px;"></div>
+    </section>
+
+    <section>
+      <div class="section-title" style="justify-content: space-between;">
+        <span><span class="dot">●</span>가상 회비</span>
+        <button class="btn-toggle no-print" id="pool-toggle-btn">사용 안 함</button>
+      </div>
+      <p class="section-sub no-print">실제로 걷었다고 치고, 지출을 공용 경비에서 쓴 셈으로 계산해요.</p>
+      <div id="pool-body"></div>
+    </section>
+
+    <section class="no-print">
+      <div class="section-title" style="justify-content: space-between;">
+        <span><span class="dot">●</span>환율 설정</span>
+        <button class="btn-toggle" id="fx-panel-toggle-btn">열기</button>
+      </div>
+      <p class="section-sub">원화 외 통화(IDR·USD) 지출을 정산할 때 쓸 환율이에요. 원화만 쓴다면 안 열어도 돼요.</p>
+      <div id="fx-body" style="display:none;"></div>
+    </section>
+
+    <section class="no-print">
+      <div class="section-title"><span class="dot">●</span>지출 추가</div>
+      <div id="expense-form-body"></div>
+    </section>
+
+    <section id="expense-list-section" style="display:none;">
+      <div class="section-title"><span class="dot">●</span>지출 내역</div>
+      <p class="section-sub" id="expense-count-sub"></p>
+      <div id="expense-list" class="space-y"></div>
+    </section>
+
+    <section id="category-summary-section" style="display:none;">
+      <div class="section-title"><span class="dot">●</span>카테고리 요약</div>
+      <div id="category-summary-body"></div>
+    </section>
+
+    <section>
+      <div class="section-title"><span class="dot">●</span>정산 결과</div>
+      <p class="section-sub" id="settlement-sub"></p>
+      <div id="settlement-body"></div>
+      <button type="button" class="btn btn-dark no-print" id="share-text-btn" style="width:100%; margin-top:12px;">💬 정산 결과 텍스트 복사 (카톡 공유용)</button>
+      <p class="copy-hint no-print" id="share-text-hint"></p>
+      <button type="button" class="btn btn-brass-soft no-print" id="print-view-btn" style="width:100%; margin-top:8px;">🖨️ 인쇄용 화면 (PDF로 저장 가능)</button>
+      <p class="copy-hint no-print" style="color: var(--ink-soft);">※ 클로드 채팅 미리보기에서는 인쇄창이 안 뜰 수 있어요. 안 되면 홈 화면(다운로드) 버전에서 눌러주세요.</p>
+      <p class="print-only" id="print-timestamp" style="font-size:11px; color:var(--ink-soft); text-align:right; margin-top:16px;"></p>
+    </section>
+
+    <section class="no-print">
+      <div class="section-title" style="justify-content: space-between;">
+        <span><span class="dot">●</span>데이터 백업</span>
+        <button class="btn-toggle" id="backup-toggle-btn">열기</button>
+      </div>
+      <p class="section-sub">자동 저장이 안 되는 환경일 수 있으니, 아래 텍스트를 복사해두면 나중에 그대로 붙여넣어 복원할 수 있어요.</p>
+      <div id="backup-body" style="display:none;"></div>
+    </section>
+
+    <p class="footer-note no-print" id="footer-save-note">데이터는 이 브라우저에 자동 저장을 시도해요. 안 되면 위 "데이터 백업"으로 직접 보관해 주세요.</p>
+  </div>
+
+  <div id="toast" class="toast"></div>
+  <div id="undo-bar" class="no-print" style="display:none; position:fixed; left:16px; right:16px; bottom:16px; z-index:50; max-width:480px; margin:0 auto;"></div>
+  <div id="confirm-overlay" class="no-print" style="display:none; position:fixed; inset:0; background:rgba(20,16,12,0.5); z-index:100; align-items:center; justify-content:center; padding:20px;">
+    <div class="card" style="max-width:360px; width:100%; background:var(--paper);">
+      <p id="confirm-message" style="font-size:14px; line-height:1.55; margin:2px 0 16px; white-space:pre-line;"></p>
+      <div style="display:flex; gap:8px; justify-content:flex-end;">
+        <button type="button" id="confirm-cancel-btn" class="btn btn-toggle" style="width:auto; padding:9px 16px;">취소</button>
+        <button type="button" id="confirm-ok-btn" class="btn btn-stamp" style="width:auto; padding:9px 16px;">확인</button>
+      </div>
+    </div>
+  </div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  var POOL_ID = "__POOL__";
+  var POOL_NAME = "회비(공동경비)";
+  var CATEGORIES = ["식비", "숙소", "교통", "쇼핑", "기타"];
+  var DEFAULT_CATEGORY = CATEGORIES[0];
+  var RECEIPT_FEATURE_ENABLED = false; // 영수증 사진 인식: 환경별 지원 여부 재확인 전까지 비활성화
+
+  // ---------- cloud sync (Firebase Firestore) ----------
+  // Lets two or more phones (예: 대장님 & 딸) share one trip in real time.
+  // A trip becomes "cloud" the moment someone taps "클라우드로 공유하기": its
+  // current local data is pushed to Firestore under the SAME id the trip
+  // already has locally, so the share link is simply "?trip=<tripId>".
+  // localStorage / window.storage stays the source of truth for the UI and
+  // for offline use; Firestore is a mirror + realtime relay on top of it.
+  var firebaseConfig = {
+    apiKey: "AIzaSyBgQOdcYS_eLUw5Vdv7Wb0VjiGcGYcPamU",
+    authDomain: "settlement-sbking.firebaseapp.com",
+    projectId: "settlement-sbking",
+    storageBucket: "settlement-sbking.firebasestorage.app",
+    messagingSenderId: "683591898848",
+    appId: "1:683591898848:web:db2f8e693c1d17e05f6285"
+  };
+  var cloudDb = null;
+  var cloudReady = false;
+  function cloudInit() {
+    if (cloudReady) return cloudDb;
+    cloudReady = true;
+    try {
+      if (typeof firebase === "undefined") return null;
+      firebase.initializeApp(firebaseConfig);
+      cloudDb = firebase.firestore();
+    } catch (e) {
+      cloudDb = null;
+    }
+    return cloudDb;
+  }
+  function cloudAvailable() { return !!cloudInit(); }
+  function cloudDocRef(tripId) {
+    var db = cloudInit();
+    return db ? db.collection("trips").doc(tripId) : null;
+  }
+  var cloudUnsubscribe = null;
+  var cloudApplyingRemote = false;
+  function detachCloudListener() {
+    if (cloudUnsubscribe) { try { cloudUnsubscribe(); } catch (e) {} cloudUnsubscribe = null; }
+  }
+  function attachCloudListener(tripId) {
+    detachCloudListener();
+    var ref = cloudDocRef(tripId);
+    if (!ref) return;
+    cloudUnsubscribe = ref.onSnapshot(function (doc) {
+      if (!doc.exists) return;
+      if (doc.metadata.hasPendingWrites) return; // our own optimistic write echoing back — ignore
+      if (tripId !== currentTripId) return; // stale listener from a previous trip
+      var payload = doc.data();
+      if (!payload || typeof payload.data !== "string") return;
+      var parsed;
+      try { parsed = JSON.parse(payload.data); } catch (e) { return; }
+      cloudApplyingRemote = true;
+      applyLoadedData(parsed);
+      storageSet(tripDataKey(tripId), payload.data);
+      var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+      if (entry) {
+        entry.expenseCount = state.expenses.length;
+        entry.updatedAt = Date.now();
+        saveTripsIndex();
+      }
+      syncFormWithMembers();
+      renderAll();
+      cloudApplyingRemote = false;
+      showToast("🔄 상대방이 입력한 내용으로 갱신됐어요.");
+    }, function () {
+      // permission or network error — silently keep working offline
+    });
+  }
+  function pushCloudUpdate(tripId) {
+    var ref = cloudDocRef(tripId);
+    if (!ref) return;
+    var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+    ref.set({
+      tripName: entry ? entry.name : "",
+      data: JSON.stringify(state),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true }).catch(function () {});
+  }
+  function isCloudTrip(id) {
+    var entry = tripsIndex.filter(function (t) { return t.id === id; })[0];
+    return !!(entry && entry.cloud);
+  }
+  function getShareLink(tripId) {
+    return location.origin + location.pathname + "?trip=" + encodeURIComponent(tripId);
+  }
+  function enableCloudSync(tripId) {
+    if (!cloudAvailable()) {
+      showToast("⚠ 클라우드 연결에 실패했어요. 네트워크를 확인해 주세요.");
+      return;
+    }
+    var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+    if (!entry) return;
+    entry.cloud = true;
+    saveTripsIndex();
+    pushCloudUpdate(tripId); // migrate current local data up as the initial cloud copy — 지금까지의 기록이 그대로 히스토리가 됨
+    attachCloudListener(tripId);
+    renderTripPanel();
+    showCloudLinkModal(tripId);
+  }
+  function showCloudLinkModal(tripId) {
+    var link = getShareLink(tripId);
+    showConfirmModal(
+      "공유 링크가 준비됐어요:\n" + link + "\n\n이 링크를 카카오톡 등으로 상대방에게 보내주면, 상대방이 링크를 열 때 자동으로 같은 여행을 실시간으로 공유하게 돼요.\n\n지금 링크를 복사할까요?",
+      function () { copyCloudLink(tripId); },
+      function () {}
+    );
+  }
+  function copyCloudLink(tripId) {
+    var link = getShareLink(tripId);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(function () {
+        showToast("🔗 링크를 복사했어요.");
+      }).catch(function () { promptCopyFallback(link); });
+    } else {
+      promptCopyFallback(link);
+    }
+  }
+  function promptCopyFallback(link) {
+    window.prompt("아래 링크를 길게 눌러 복사해 주세요:", link);
+  }
+  // Called once at startup when the URL has ?trip=<id>. Handles two cases:
+  //  1) that trip already exists locally (same device reopening its own share link) -> just switch + listen
+  //  2) brand-new device (예: 딸의 폰) -> pull the cloud copy down, add it locally, switch + listen
+  function handleIncomingCloudLink(cb) {
+    var params = new URLSearchParams(location.search);
+    var tripId = params.get("trip");
+    if (!tripId) { cb(); return; }
+    if (!cloudAvailable()) { cb(); return; }
+    var existing = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+    if (existing) {
+      existing.cloud = true;
+      saveTripsIndex();
+      if (tripId !== currentTripId) {
+        currentTripId = tripId;
+        saveCurrentTripPointer();
+        clearInMemoryState();
+        storageGet(tripDataKey(tripId)).then(function (raw) {
+          if (raw) { try { applyLoadedData(JSON.parse(raw)); } catch (e) {} }
+          attachCloudListener(tripId);
+          cb();
+        });
+      } else {
+        attachCloudListener(tripId);
+        cb();
+      }
+      return;
+    }
+    // not present locally yet — pull it from the cloud
+    var ref = cloudDocRef(tripId);
+    if (!ref) { cb(); return; }
+    ref.get().then(function (doc) {
+      if (!doc.exists) { showToast("⚠ 공유 링크의 여행을 찾을 수 없어요."); cb(); return; }
+      var payload = doc.data();
+      var parsed = null;
+      try { parsed = JSON.parse(payload.data); } catch (e) {}
+      tripsIndex.push({
+        id: tripId, name: payload.tripName || "공유받은 여행", createdAt: Date.now(), updatedAt: Date.now(),
+        expenseCount: parsed && parsed.expenses ? parsed.expenses.length : 0, status: "ongoing", startDate: "", endDate: "", cloud: true
+      });
+      saveTripsIndex();
+      currentTripId = tripId;
+      saveCurrentTripPointer();
+      clearInMemoryState();
+      if (parsed) applyLoadedData(parsed);
+      storageSet(tripDataKey(tripId), payload.data);
+      attachCloudListener(tripId);
+      showToast("☁ 공유받은 여행을 불러왔어요: " + (payload.tripName || ""));
+      cb();
+    }).catch(function () {
+      showToast("⚠ 공유 링크를 여는 중 문제가 발생했어요. 네트워크를 확인해 주세요.");
+      cb();
+    });
+  }
+
+  // ---------- currency / fx ----------
+  var CURRENCIES = ["KRW", "IDR", "USD"];
+  var CURRENCY_INFO = {
+    KRW: { symbol: "", suffix: "원", decimals: 0 },
+    IDR: { symbol: "Rp ", suffix: "", decimals: 0 },
+    USD: { symbol: "$", suffix: "", decimals: 2 }
+  };
+  var FX_API_URL = "https://open.er-api.com/v6/latest/KRW";
+
+  var state = {
+    members: [],
+    expenses: [],
+    poolEnabled: false,
+    contributions: {},
+    fxRates: {},       // { USD: "1380", IDR: "0.089" } -- KRW per 1 unit of that currency (string, like contributions)
+    fxUpdatedAt: null  // ms timestamp of last auto-fetch
+  };
+
+  var form = {
+    payerId: "",
+    splitType: "equal",
+    participants: [],
+    customShares: {},
+    poolTarget: "",
+    category: DEFAULT_CATEGORY,
+    currency: "KRW",
+    excludeFromSettlement: false,
+    prevParticipants: null // remembers the participant selection from before "개인 지출" was turned on
+  };
+
+  function uid() { return Math.random().toString(36).slice(2, 9); }
+
+  var toastTimer = null;
+  function showToast(msg) {
+    var el = document.getElementById("toast");
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { el.classList.remove("show"); }, 2200);
+  }
+
+  // ---------- custom confirm modal (native window.confirm is unreliable in some webviews) ----------
+  var confirmOkCallback = null;
+  var confirmCancelCallback = null;
+  function showConfirmModal(message, onConfirm, onCancel) {
+    var overlay = document.getElementById("confirm-overlay");
+    var msgEl = document.getElementById("confirm-message");
+    if (!overlay || !msgEl) { if (onConfirm) onConfirm(); return; } // safety fallback
+    msgEl.textContent = message;
+    overlay.style.display = "flex";
+    confirmOkCallback = onConfirm || null;
+    confirmCancelCallback = onCancel || null;
+  }
+  function hideConfirmModal(runCancel) {
+    var overlay = document.getElementById("confirm-overlay");
+    if (overlay) overlay.style.display = "none";
+    var cancelCb = confirmCancelCallback;
+    confirmOkCallback = null;
+    confirmCancelCallback = null;
+    if (runCancel && cancelCb) cancelCb();
+  }
+
+
+  // Stack (not a single slot) -- lets several consecutive deletions be undone one by one,
+  // instead of only the very last one.
+  var undoStack = [];
+  var undoTimer = null;
+  function pushUndo(snapshot) {
+    undoStack.push(snapshot);
+    refreshUndoBar();
+  }
+  function refreshUndoBar() {
+    var el = document.getElementById("undo-bar");
+    if (!el) return;
+    if (undoStack.length === 0) { hideUndoBar(); return; }
+    var top = undoStack[undoStack.length - 1];
+    var label = top.kind === "expense"
+      ? ('"' + top.expense.desc + '" 삭제됨')
+      : ('"' + top.member.name + '" 삭제됨' + (top.expenses.length ? ' (지출 ' + top.expenses.length + '건 포함)' : ''));
+    var countSuffix = undoStack.length > 1 ? (' · 되돌릴 항목 ' + undoStack.length + '개') : '';
+    el.style.display = "";
+    el.innerHTML =
+      '<div style="background:var(--ink); color:#fff; border-radius:12px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; gap:10px; box-shadow:0 4px 16px rgba(0,0,0,0.25);">' +
+      '<span style="font-size:13px;">' + esc(label + countSuffix) + '</span>' +
+      '<button type="button" id="undo-btn" style="background:var(--brass); color:#fff; border:none; border-radius:8px; padding:7px 12px; font-size:12px; font-weight:600; white-space:nowrap;">실행취소</button>' +
+      '</div>';
+    if (undoTimer) clearTimeout(undoTimer);
+    undoTimer = setTimeout(function () { undoStack = []; hideUndoBar(); }, 10000);
+  }
+  function hideUndoBar() {
+    var el = document.getElementById("undo-bar");
+    if (el) { el.style.display = "none"; el.innerHTML = ""; }
+    undoStack = [];
+    if (undoTimer) { clearTimeout(undoTimer); undoTimer = null; }
+  }
+  function undoLastDelete() {
+    if (undoStack.length === 0) { hideUndoBar(); return; }
+    var snap = undoStack.pop();
+    if (snap.kind === "expense") {
+      state.expenses.push(snap.expense);
+      showToast("복구했어요: " + snap.expense.desc);
+    } else {
+      state.members.push(snap.member);
+      snap.expenses.forEach(function (e) { state.expenses.push(e); });
+      if (snap.contribution !== undefined) state.contributions[snap.member.id] = snap.contribution;
+      syncFormWithMembers();
+      showToast("복구했어요: " + snap.member.name);
+    }
+    renderAll();
+    scheduleSave();
+    refreshUndoBar(); // stays open (with updated count) if more items remain, else hides
+  }
+
+  var formSuccessMsg = "";
+  var successTimer = null;
+  function showInlineSuccess(msg) {
+    formSuccessMsg = msg;
+    var el = document.getElementById("form-success");
+    if (el) el.textContent = msg;
+    if (successTimer) clearTimeout(successTimer);
+    successTimer = setTimeout(function () {
+      formSuccessMsg = "";
+      var el2 = document.getElementById("form-success");
+      if (el2) el2.textContent = "";
+    }, 3000);
+  }
+  function toNumber(v) {
+    var n = Number(String(v == null ? "" : v).replace(/[^0-9.-]/g, ""));
+    return isNaN(n) ? 0 : n;
+  }
+  function formatWon(n) {
+    var v = Math.round(n || 0);
+    return (v < 0 ? "-" : "") + Math.abs(v).toLocaleString("ko-KR") + "원";
+  }
+  function formatCurrency(n, currency) {
+    var info = CURRENCY_INFO[currency] || CURRENCY_INFO.KRW;
+    if (currency === "KRW" || !currency) return formatWon(n);
+    var v = info.decimals > 0 ? Math.round((n || 0) * 100) / 100 : Math.round(n || 0);
+    var sign = v < 0 ? "-" : "";
+    var abs = Math.abs(v);
+    var numStr = abs.toLocaleString("ko-KR", { minimumFractionDigits: info.decimals, maximumFractionDigits: info.decimals });
+    return sign + info.symbol + numStr + info.suffix;
+  }
+  // KRW per 1 unit of `currency`. Returns 0 if not set (i.e. not usable yet).
+  function fxRate(currency) {
+    if (currency === "KRW") return 1;
+    var r = toNumber(state.fxRates[currency]);
+    return r > 0 ? r : 0;
+  }
+  function toKRW(amount, currency) {
+    if (!currency || currency === "KRW") return amount;
+    return amount * fxRate(currency);
+  }
+  function fromKRW(amountKRW, currency) {
+    if (!currency || currency === "KRW") return amountKRW;
+    var rate = fxRate(currency);
+    return rate ? amountKRW / rate : 0;
+  }
+  // KRW remaining in the pool right now (collected contributions minus pool-paid expenses so far).
+  // Pass an expense id to exclude (e.g. the one currently being edited) so it isn't counted against itself.
+  function poolRemainingKRW(excludeExpenseId) {
+    var contribTotal = state.members.reduce(function (s, m) { return s + toNumber(state.contributions[m.id]); }, 0);
+    var poolExpenseTotal = state.expenses
+      .filter(function (e) { return e.payerId === POOL_ID && e.id !== excludeExpenseId; })
+      .reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+    return contribTotal - poolExpenseTotal;
+  }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function splitEqual(amount, ids) {
+    var n = ids.length;
+    if (n === 0) return [];
+    var base = Math.floor(amount / n);
+    var remainder = amount - base * n;
+    return ids.map(function (id, i) {
+      return { memberId: id, amount: base + (i < remainder ? 1 : 0) };
+    });
+  }
+
+  function matchBalances(balanceEntries) {
+    // balanceEntries: [{id, amt}] where amt is signed net balance (can include decimals; rounded here)
+    var creditors = [], debtors = [];
+    balanceEntries.forEach(function (e) {
+      var rounded = Math.round(e.amt);
+      if (rounded > 0) creditors.push({ id: e.id, amt: rounded });
+      else if (rounded < 0) debtors.push({ id: e.id, amt: -rounded });
+    });
+    creditors.sort(function (a, b) { return b.amt - a.amt; });
+    debtors.sort(function (a, b) { return b.amt - a.amt; });
+    var transfers = [];
+    var ci = 0, di = 0;
+    while (ci < creditors.length && di < debtors.length) {
+      var c = creditors[ci], d = debtors[di];
+      var pay = Math.min(c.amt, d.amt);
+      if (pay > 0) transfers.push({ from: d.id, to: c.id, amount: pay });
+      c.amt -= pay; d.amt -= pay;
+      if (c.amt === 0) ci++;
+      if (d.amt === 0) di++;
+    }
+    var leftover = [];
+    for (var i = ci; i < creditors.length; i++) {
+      if (creditors[i].amt > 0) leftover.push({ id: creditors[i].id, amt: creditors[i].amt });
+    }
+    for (var j = di; j < debtors.length; j++) {
+      if (debtors[j].amt > 0) leftover.push({ id: debtors[j].id, amt: -debtors[j].amt });
+    }
+    return { transfers: transfers, leftover: leftover };
+  }
+
+  function computeSettlement(participantIds, expenses) {
+    var balance = {};
+    participantIds.forEach(function (id) { balance[id] = 0; });
+    expenses.forEach(function (exp) {
+      if (balance[exp.payerId] === undefined) return;
+      var cur = exp.currency || "KRW";
+      balance[exp.payerId] += toKRW(exp.amount, cur);
+      exp.shares.forEach(function (s) {
+        if (balance[s.memberId] === undefined) return;
+        balance[s.memberId] -= toKRW(s.amount, cur);
+      });
+    });
+    var entries = Object.keys(balance).map(function (id) { return { id: id, amt: balance[id] }; });
+    var matched = matchBalances(entries);
+    return { balance: balance, transfers: matched.transfers };
+  }
+
+  // Settle only among a chosen subset, using each person's overall net balance.
+  // Any amount that isn't offset within the subset is reported as leftover
+  // (it's still tied up with someone outside the selected group).
+  function computeSubsetSettlement(fullBalance, subsetIds) {
+    var entries = subsetIds.map(function (id) { return { id: id, amt: fullBalance[id] || 0 }; });
+    return matchBalances(entries);
+  }
+
+  // A "회비로 결제" expense (paid from the sponsorship pool) or a manually
+  // flagged "개인 지출" expense never enters the debt-settlement graph.
+  function isExpenseExcluded(e) {
+    return !!e.excludeFromSettlement || e.payerId === POOL_ID;
+  }
+
+  function memberName(id) {
+    if (id === POOL_ID) return POOL_NAME;
+    var m = state.members.filter(function (x) { return x.id === id; })[0];
+    return m ? m.name : "?";
+  }
+
+  // ---------- persistence ----------
+  // Prefer Claude's window.storage (works inside a Claude artifact preview).
+  // If it isn't present -- e.g. the file was saved and opened directly in a
+  // normal browser / added to the home screen -- fall back to localStorage,
+  // which works fine for a standalone page like this.
+  function hasClaudeStorage() {
+    return !!(window.storage && typeof window.storage.get === "function" && typeof window.storage.set === "function");
+  }
+  function hasLocalStorage() {
+    try {
+      var k = "__settle_probe__";
+      window.localStorage.setItem(k, "1");
+      window.localStorage.removeItem(k);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  // Generic key/value helpers that work against either backend, always as a Promise.
+  function storageGet(key) {
+    if (hasClaudeStorage()) {
+      return window.storage.get(key, false)
+        .then(function (res) { return res && res.value ? res.value : null; })
+        .catch(function () { return storageGetLocal(key); });
+    }
+    return Promise.resolve(storageGetLocal(key));
+  }
+  function storageGetLocal(key) {
+    if (!hasLocalStorage()) return null;
+    try { return window.localStorage.getItem(key); } catch (e) { return null; }
+  }
+  function storageSet(key, value) {
+    if (hasClaudeStorage()) {
+      return window.storage.set(key, value, false).catch(function () { storageSetLocal(key, value); });
+    }
+    storageSetLocal(key, value);
+    return Promise.resolve();
+  }
+  function storageSetLocal(key, value) {
+    if (!hasLocalStorage()) return;
+    try { window.localStorage.setItem(key, value); } catch (e) {}
+  }
+  function storageDelete(key) {
+    if (hasClaudeStorage()) {
+      return window.storage.delete(key, false).catch(function () { storageDeleteLocal(key); });
+    }
+    storageDeleteLocal(key);
+    return Promise.resolve();
+  }
+  function storageDeleteLocal(key) {
+    if (!hasLocalStorage()) return;
+    try { window.localStorage.removeItem(key); } catch (e) {}
+  }
+
+  // ---------- trip profiles ----------
+  // Multiple trips can be saved side by side, each with its own members/expenses/
+  // fx rates etc. This avoids old test data or a previous trip bleeding into a new one.
+  var TRIPS_INDEX_KEY = "settle:trips-index-v1";
+  var CURRENT_TRIP_KEY = "settle:current-trip-v1";
+  var LEGACY_STORAGE_KEY = "settle:trip-html-v1"; // pre-multi-trip single blob, kept only for migration
+  function tripDataKey(id) { return "settle:trip-data-v1:" + id; }
+
+  var tripsIndex = [];      // [{id, name, createdAt, updatedAt, expenseCount, status, startDate, endDate}]
+  var currentTripId = null;
+  var tripPanelOpen = false;
+  var fxPanelOpen = false;
+  var startupBannerDismissed = false;
+
+  function saveTripsIndex() { return storageSet(TRIPS_INDEX_KEY, JSON.stringify(tripsIndex)); }
+  function saveCurrentTripPointer() { return storageSet(CURRENT_TRIP_KEY, currentTripId || ""); }
+  function touchCurrentTripIndex() {
+    var entry = tripsIndex.filter(function (t) { return t.id === currentTripId; })[0];
+    if (entry) {
+      entry.updatedAt = Date.now();
+      entry.expenseCount = state.expenses.length;
+      saveTripsIndex();
+    }
+  }
+  function clearInMemoryState() {
+    hideUndoBar();
+    state.members = [];
+    state.expenses = [];
+    state.poolEnabled = false;
+    state.contributions = {};
+    state.fxRates = {};
+    state.fxUpdatedAt = null;
+    prevMemberIds = [];
+    editingExpenseId = null;
+    retroPrompt = null;
+    settleFilter = null;
+    formSuccessMsg = "";
+  }
+
+  var saveTimer = null;
+  function scheduleSave() {
+    setSaveState("saving");
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      if (!currentTripId) { setSaveState("idle"); return; }
+      var payload = JSON.stringify(state);
+      storageSet(tripDataKey(currentTripId), payload).then(function () { setSaveState("saved"); });
+      touchCurrentTripIndex();
+      if (!cloudApplyingRemote && isCloudTrip(currentTripId)) pushCloudUpdate(currentTripId);
+    }, 400);
+  }
+  function setSaveState(s) {
+    var el = document.getElementById("stat-save");
+    if (el) el.textContent = s === "saving" ? "저장 중…" : "자동 저장됨";
+  }
+  function applyLoadedData(data) {
+    if (!data || typeof data !== "object") return;
+    state.members = data.members || [];
+    state.expenses = data.expenses || [];
+    state.poolEnabled = !!data.poolEnabled;
+    state.contributions = data.contributions || {};
+    state.fxRates = (data.fxRates && typeof data.fxRates === "object") ? data.fxRates : {};
+    state.fxUpdatedAt = data.fxUpdatedAt || null;
+  }
+
+  function loadState(cb) {
+    Promise.all([
+      storageGet(TRIPS_INDEX_KEY),
+      storageGet(CURRENT_TRIP_KEY),
+      storageGet(LEGACY_STORAGE_KEY)
+    ]).then(function (results) {
+      var idxRaw = results[0], curRaw = results[1], legacyRaw = results[2];
+      try { tripsIndex = idxRaw ? JSON.parse(idxRaw) : []; } catch (e) { tripsIndex = []; }
+      if (!Array.isArray(tripsIndex)) tripsIndex = [];
+
+      function finishWithRaw(raw) {
+        if (raw) { try { applyLoadedData(JSON.parse(raw)); } catch (e) {} }
+        cb();
+      }
+
+      if (tripsIndex.length === 0) {
+        if (legacyRaw) {
+          // migrate the old single-trip data into the first named trip profile
+          var newId = uid();
+          tripsIndex = [{ id: newId, name: "이전 여행", createdAt: Date.now(), updatedAt: Date.now(), expenseCount: 0, status: "ongoing", startDate: "", endDate: "" }];
+          currentTripId = newId;
+          storageSet(tripDataKey(newId), legacyRaw);
+          saveTripsIndex();
+          saveCurrentTripPointer();
+          finishWithRaw(legacyRaw);
+        } else {
+          // brand-new device/browser: create an empty default trip so the app works right away
+          var freshId = uid();
+          tripsIndex = [{ id: freshId, name: "여행 1", createdAt: Date.now(), updatedAt: Date.now(), expenseCount: 0, status: "ongoing", startDate: "", endDate: "" }];
+          currentTripId = freshId;
+          saveTripsIndex();
+          saveCurrentTripPointer();
+          cb();
+        }
+        return;
+      }
+
+      currentTripId = (curRaw && tripsIndex.some(function (t) { return t.id === curRaw; })) ? curRaw : tripsIndex[0].id;
+      storageGet(tripDataKey(currentTripId)).then(finishWithRaw);
+    });
+  }
+
+  // ---------- trip switcher UI ----------
+  function currentTripEntry() {
+    return tripsIndex.filter(function (t) { return t.id === currentTripId; })[0] || null;
+  }
+  function isTripLocked() {
+    var t = currentTripEntry();
+    return !!(t && t.status === "done");
+  }
+  function guardLocked() {
+    if (isTripLocked()) {
+      showToast("🔒 완료된 여행이라 수정할 수 없어요. \"여행\" 패널에서 진행중으로 전환해 주세요.");
+      return true;
+    }
+    return false;
+  }
+  function renderStartupBanner() {
+    var el = document.getElementById("startup-banner");
+    if (!el) return;
+    if (startupBannerDismissed) { el.style.display = "none"; el.innerHTML = ""; return; }
+    var others = tripsIndex.filter(function (t) { return t.id !== currentTripId && t.status !== "done"; })
+      .sort(function (a, b) { return (b.updatedAt || 0) - (a.updatedAt || 0); });
+    if (!others.length) { el.style.display = "none"; el.innerHTML = ""; return; }
+    var first = others[0];
+    var extra = others.length > 1 ? (" 외 " + (others.length - 1) + "건") : "";
+    el.style.display = "";
+    el.innerHTML =
+      '<div class="card" style="background:var(--brass-bg); border-color:var(--brass); display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:14px;">' +
+      '<div style="font-size:13px;">📌 진행 중인 다른 여행이 있어요: <b>' + esc(first.name) + '</b>' + extra + '</div>' +
+      '<div style="display:flex; gap:6px; flex-shrink:0;">' +
+      '<button class="btn btn-dark" style="padding:6px 10px; font-size:12px; width:auto;" data-switch-trip="' + first.id + '">이어하기</button>' +
+      '<button class="del-btn" id="startup-banner-dismiss">✕</button>' +
+      '</div></div>';
+  }
+  function renderTripHeader() {
+    var sub = document.getElementById("trip-current-sub");
+    if (!sub) return;
+    var cur = currentTripEntry();
+    if (!cur) { sub.textContent = "여행을 선택하거나 새로 시작해 주세요"; return; }
+    sub.textContent = "현재 여행: " + cur.name + (cur.status === "done" ? " · 🔒 완료" : "");
+  }
+  function tripDateLabel(t) {
+    if (!t.startDate && !t.endDate) return "";
+    return (t.startDate || "?") + " ~ " + (t.endDate || "?");
+  }
+  function renderTripPanel() {
+    var btn = document.getElementById("trip-panel-toggle-btn");
+    var body = document.getElementById("trip-panel-body");
+    if (!btn || !body) return;
+    btn.textContent = tripPanelOpen ? "닫기" : "열기";
+    btn.className = "btn-toggle" + (tripPanelOpen ? " on" : "");
+    body.style.display = tripPanelOpen ? "" : "none";
+    renderTripHeader();
+    if (!tripPanelOpen) return;
+
+    var sorted = tripsIndex.slice().sort(function (a, b) {
+      if (a.id === currentTripId) return -1;
+      if (b.id === currentTripId) return 1;
+      return (b.updatedAt || 0) - (a.updatedAt || 0);
+    });
+
+    var html = '';
+    sorted.forEach(function (t) {
+      var isCurrent = t.id === currentTripId;
+      var done = t.status === "done";
+      var dateLabel = tripDateLabel(t);
+      html += '<div class="card" style="margin-bottom:8px;' + (isCurrent ? " border-color:var(--brass);" : "") + '">';
+      html += '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">';
+      html += '<div style="flex:1; min-width:0;">';
+      if (isCurrent) {
+        html += '<input type="text" id="trip-rename-input" value="' + esc(t.name) + '" style="font-weight:600; font-size:14px; margin-bottom:6px; width:100%;" />';
+      } else {
+        html += '<div style="font-weight:600; font-size:14px;">' + esc(t.name) + '</div>';
+      }
+      html += '<div class="muted" style="font-size:11px;">' + (t.expenseCount || 0) + '건' + (dateLabel ? ' · ' + esc(dateLabel) : '') + '</div>';
+      html += '</div>';
+      html += '<span class="badge" style="flex-shrink:0; background:' + (done ? "var(--stamp-soft)" : "var(--brass-bg)") + '; color:' + (done ? "var(--stamp)" : "var(--brass)") + ';">' + (done ? "🔒 완료" : "진행중") + '</span>';
+      html += '</div>';
+      if (t.cloud) {
+        html += '<div class="muted" style="font-size:11px; margin-top:4px;">☁ 실시간 공유 중</div>';
+      }
+
+      if (isCurrent) {
+        html += '<div class="row" style="margin-top:8px;">';
+        html += '<input type="date" id="trip-start-date" value="' + esc(t.startDate || "") + '" style="max-width:135px;" />';
+        html += '<input type="date" id="trip-end-date" value="' + esc(t.endDate || "") + '" style="max-width:135px;" />';
+        html += '</div>';
+        html += '<div style="display:flex; gap:6px; margin-top:8px; flex-wrap:wrap;">';
+        html += '<button class="btn btn-brass-soft" style="font-size:12px; padding:6px 10px;" id="trip-meta-save-btn">이름/날짜 저장</button>';
+        html += '<button class="btn ' + (done ? "btn-dark" : "btn-stamp") + '" style="font-size:12px; padding:6px 10px; width:auto;" data-toggle-trip-status="' + t.id + '">' + (done ? "🔓 진행중으로 전환" : "✓ 정산 완료로 표시") + '</button>';
+        html += '<button class="del-btn" style="font-size:12px;" data-delete-trip="' + t.id + '">✕ 삭제</button>';
+        html += '</div>';
+        html += '<div style="margin-top:6px;">';
+        if (t.cloud) {
+          html += '<button class="btn btn-toggle" style="font-size:12px; padding:6px 10px; width:auto;" data-cloud-copy="' + t.id + '">🔗 공유 링크 복사</button>';
+        } else {
+          html += '<button class="btn btn-toggle" style="font-size:12px; padding:6px 10px; width:auto;" data-cloud-share="' + t.id + '">☁ 클라우드로 공유하기 (실시간 동기화)</button>';
+        }
+        html += '</div>';
+      } else {
+        html += '<div style="display:flex; gap:6px; margin-top:8px;">';
+        html += '<button class="btn btn-dark" style="padding:6px 10px; font-size:12px; width:auto;" data-switch-trip="' + t.id + '">이어하기</button>';
+        html += '<button class="btn btn-toggle" style="padding:5px 10px; font-size:12px;" data-toggle-trip-status="' + t.id + '">' + (done ? "진행중으로 전환" : "완료로 표시") + '</button>';
+        html += '<button class="del-btn" data-delete-trip="' + t.id + '">✕</button>';
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+
+    html += '<div class="row" style="margin-top:4px;">';
+    html += '<input type="text" id="new-trip-name-input" placeholder="새 여행 이름 (예: 인도네시아 8월)" />';
+    html += '<button class="btn btn-stamp" id="new-trip-btn">+ 새 여행 시작</button>';
+    html += '</div>';
+    body.innerHTML = html;
+  }
+  function toggleTripPanel() {
+    tripPanelOpen = !tripPanelOpen;
+    renderTripPanel();
+  }
+  function switchTrip(id) {
+    if (id === currentTripId) return;
+    detachCloudListener();
+    currentTripId = id;
+    saveCurrentTripPointer();
+    storageGet(tripDataKey(id)).then(function (raw) {
+      clearInMemoryState();
+      if (raw) { try { applyLoadedData(JSON.parse(raw)); } catch (e) {} }
+      syncFormWithMembers();
+      resetExpenseForm();
+      tripPanelOpen = false;
+      if (isCloudTrip(id)) attachCloudListener(id);
+      renderAll();
+      showToast("전환됐어요: " + ((currentTripEntry() || {}).name || ""));
+    });
+  }
+  function createNewTrip() {
+    var input = document.getElementById("new-trip-name-input");
+    var name = (input && input.value.trim()) || "새 여행";
+    var id = uid();
+    tripsIndex.push({ id: id, name: name, createdAt: Date.now(), updatedAt: Date.now(), expenseCount: 0, status: "ongoing", startDate: "", endDate: "" });
+    saveTripsIndex();
+    currentTripId = id;
+    saveCurrentTripPointer();
+    clearInMemoryState();
+    syncFormWithMembers();
+    resetExpenseForm();
+    storageSet(tripDataKey(id), JSON.stringify(state));
+    tripPanelOpen = false;
+    renderAll();
+    showToast("새 여행을 시작했어요: " + name);
+  }
+  function saveTripMeta() {
+    var entry = currentTripEntry();
+    if (!entry) return;
+    var nameInput = document.getElementById("trip-rename-input");
+    var startInput = document.getElementById("trip-start-date");
+    var endInput = document.getElementById("trip-end-date");
+    var name = nameInput ? nameInput.value.trim() : entry.name;
+    if (name) entry.name = name;
+    entry.startDate = startInput ? startInput.value : entry.startDate;
+    entry.endDate = endInput ? endInput.value : entry.endDate;
+    entry.updatedAt = Date.now();
+    saveTripsIndex();
+    renderTripHeader();
+    renderTripPanel();
+    showToast("여행 정보를 저장했어요.");
+  }
+  function toggleTripStatus(id) {
+    var entry = tripsIndex.filter(function (t) { return t.id === id; })[0];
+    if (!entry) return;
+    var willLock = entry.status !== "done";
+    function applyStatus() {
+      entry.status = willLock ? "done" : "ongoing";
+      entry.updatedAt = Date.now();
+      saveTripsIndex();
+      renderTripHeader();
+      renderTripPanel();
+      renderAll();
+      showToast(willLock ? "완료로 표시했어요." : "진행중으로 전환했어요.");
+    }
+    if (willLock) {
+      showConfirmModal('"' + entry.name + '"을(를) 정산 완료로 표시할까요? 이후에는 입력이 잠기고, 다시 "진행중으로 전환"해야 수정할 수 있어요.', applyStatus);
+    } else {
+      applyStatus();
+    }
+  }
+  function deleteTrip(id) {
+    var entry = tripsIndex.filter(function (t) { return t.id === id; })[0];
+    if (!entry) return;
+    showConfirmModal('"' + entry.name + '" 여행을 삭제할까요? 이 작업은 되돌릴 수 없어요.', function () {
+      tripsIndex = tripsIndex.filter(function (t) { return t.id !== id; });
+      saveTripsIndex();
+      storageDelete(tripDataKey(id));
+      if (id === currentTripId) {
+        detachCloudListener();
+        if (tripsIndex.length > 0) {
+          switchTrip(tripsIndex[0].id);
+        } else {
+          currentTripId = null;
+          saveCurrentTripPointer();
+          clearInMemoryState();
+          resetExpenseForm();
+          renderTripPanel();
+          renderAll();
+        }
+      } else {
+        renderTripPanel();
+      }
+    });
+  }
+
+  // ---------- form defaults ----------
+  var prevMemberIds = [];
+  var retroPrompt = null; // { memberId, name, equalCount, customCount } | null
+  var editingExpenseId = null; // id of expense currently being edited, or null
+  var formPrefill = null; // { desc, amount } used once to seed the form when entering edit mode
+  function syncFormWithMembers() {
+    var currentIds = state.members.map(function (m) { return m.id; });
+    var addedIds = currentIds.filter(function (id) { return prevMemberIds.indexOf(id) === -1; });
+    if (addedIds.length) {
+      form.participants = form.participants.concat(addedIds);
+    }
+    // drop removed
+    form.participants = form.participants.filter(function (id) { return currentIds.indexOf(id) !== -1; });
+    if (!form.payerId || currentIds.indexOf(form.payerId) === -1) {
+      if (form.payerId !== POOL_ID) {
+        form.payerId = currentIds[0] || "";
+      }
+    }
+    prevMemberIds = currentIds;
+  }
+  function resetExpenseForm() {
+    document.getElementById("desc-input") && (document.getElementById("desc-input").value = "");
+    document.getElementById("amount-input") && (document.getElementById("amount-input").value = "");
+    form.splitType = "equal";
+    form.participants = state.members.map(function (m) { return m.id; });
+    form.customShares = {};
+    form.payerId = state.members[0] ? state.members[0].id : "";
+    form.category = DEFAULT_CATEGORY;
+    form.currency = "KRW";
+    form.excludeFromSettlement = false;
+    form.prevParticipants = null;
+  }
+
+  // ---------- rendering ----------
+  function renderAll() {
+    renderStartupBanner();
+    renderTripHeader();
+    renderHeader();
+    renderMembers();
+    renderFx();
+    renderPool();
+    renderExpenseForm();
+    renderExpenseList();
+    renderCategorySummary();
+    renderSettlement();
+    renderBackupText();
+  }
+
+  function renderHeader() {
+    document.getElementById("stat-members").textContent = "참여 " + state.members.length + "명";
+    var total = state.expenses.reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+    document.getElementById("stat-total").textContent = "총 지출 " + formatWon(total);
+
+    var breakdown = document.getElementById("stat-pool-breakdown");
+    if (breakdown) {
+      if (state.poolEnabled) {
+        var poolSpent = state.expenses.filter(function (e) { return e.payerId === POOL_ID; })
+          .reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+        var toSplit = total - poolSpent;
+        breakdown.style.display = "";
+        breakdown.innerHTML =
+          '<span>🎁 회비 사용 ' + formatWon(poolSpent) + '</span>' +
+          '<span class="mono">정산 대상(분배될 금액) ' + formatWon(toSplit) + '</span>';
+      } else {
+        breakdown.style.display = "none";
+        breakdown.innerHTML = "";
+      }
+    }
+  }
+
+  function renderMembers() {
+    var locked = isTripLocked();
+    var nameInput = document.getElementById("member-name-input");
+    var addBtn = document.getElementById("add-member-btn");
+    if (nameInput) nameInput.disabled = locked;
+    if (addBtn) addBtn.disabled = locked;
+    var box = document.getElementById("member-chips");
+    if (state.members.length === 0) {
+      box.innerHTML = '<span class="muted" style="font-size:14px;">아직 참여자가 없어요. 이름을 추가해 주세요.</span>';
+    } else {
+      box.innerHTML = state.members.map(function (m) {
+        return '<span class="chip member-chip">' + esc(m.name) +
+          (locked ? '' : '<button class="x-btn" data-remove-member="' + m.id + '">✕</button>') + '</span>';
+      }).join("");
+    }
+    var printBox = document.getElementById("print-member-list");
+    if (printBox) {
+      printBox.textContent = state.members.length
+        ? state.members.map(function (m) { return m.name; }).join(", ")
+        : "참여자 없음";
+    }
+    renderRetroPrompt();
+  }
+
+  function renderRetroPrompt() {
+    var box = document.getElementById("retro-prompt");
+    if (!retroPrompt || isTripLocked()) { box.style.display = "none"; box.innerHTML = ""; return; }
+    box.style.display = "";
+    var extra = retroPrompt.customCount > 0
+      ? ' (실사용분으로 등록된 지출 ' + retroPrompt.customCount + '건은 자동 반영이 어려워요. 직접 확인해 주세요.)'
+      : '';
+    box.innerHTML =
+      '<div class="pool-box">' +
+      '<div style="font-size:13px; margin-bottom:8px;"><b>' + esc(retroPrompt.name) + '</b>님, 처음부터 함께한 인원인가요? ' +
+      '기존 균등분배 지출 ' + retroPrompt.equalCount + '건에도 포함할 수 있어요.' + extra + '</div>' +
+      '<div class="row">' +
+      '<button type="button" class="btn btn-brass-soft" style="width:100%;" data-retro-apply>기존 지출에도 포함</button>' +
+      '<button type="button" class="btn-toggle" data-retro-dismiss>지금부터만</button>' +
+      '</div></div>';
+  }
+
+  function fxUpdatedLabel() {
+    if (!state.fxUpdatedAt) return "";
+    var d = new Date(state.fxUpdatedAt);
+    var pad = function (n) { return String(n).padStart(2, "0"); };
+    return (d.getMonth() + 1) + "/" + d.getDate() + " " + pad(d.getHours()) + ":" + pad(d.getMinutes()) + " 자동조회 기준";
+  }
+
+  function renderFx() {
+    var toggleBtn = document.getElementById("fx-panel-toggle-btn");
+    var box = document.getElementById("fx-body");
+    if (!box) return;
+    var hasAnyRate = !!(state.fxRates.USD || state.fxRates.IDR);
+    if (toggleBtn) {
+      toggleBtn.textContent = fxPanelOpen ? "닫기" : "열기";
+      toggleBtn.className = "btn-toggle" + (fxPanelOpen || hasAnyRate ? " on" : "");
+    }
+    box.style.display = fxPanelOpen ? "" : "none";
+    if (!fxPanelOpen) return;
+
+    var locked = isTripLocked();
+    var label = fxUpdatedLabel();
+    var html = '';
+    html += '<div class="pool-box" style="margin-bottom:10px;">';
+    html += '<div class="pool-line"><span>1 USD =</span><input type="text" inputmode="decimal" class="mono" id="fx-usd-input" value="' + esc(state.fxRates.USD || "") + '" placeholder="예: 1380"' + (locked ? " disabled" : "") + ' /></div>';
+    html += '<div class="pool-line"><span>1 IDR =</span><input type="text" inputmode="decimal" class="mono" id="fx-idr-input" value="' + esc(state.fxRates.IDR || "") + '" placeholder="예: 0.089"' + (locked ? " disabled" : "") + ' /></div>';
+    html += '</div>';
+    html += '<button type="button" class="btn btn-brass-soft" id="fx-autofetch-btn" style="width:100%;"' + (locked ? " disabled" : "") + '>🔄 지금 환율로 자동 불러오기</button>';
+    var statusMsg = locked ? '🔒 완료된 여행이라 환율이 잠겨있어요.'
+      : (label ? esc(label) + ' 환율 적용 중 (직접 수정도 가능해요)'
+      : (hasAnyRate ? '직접 입력한 환율 적용 중' : '아직 환율이 없어요. 자동으로 불러오거나 직접 입력해 주세요.'));
+    html += '<p class="copy-hint" id="fx-status">' + statusMsg + '</p>';
+    box.innerHTML = html;
+  }
+  function toggleFxPanel() {
+    fxPanelOpen = !fxPanelOpen;
+    renderFx();
+  }
+
+  function fetchFxRates() {
+    if (guardLocked()) return;
+    var status = document.getElementById("fx-status");
+    if (status) { status.style.color = "var(--brass)"; status.textContent = "환율을 불러오는 중…"; }
+    fetch(FX_API_URL)
+      .then(function (res) {
+        if (!res.ok) throw new Error("응답 오류 " + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        var rates = data && data.rates;
+        if (!rates || !rates.USD || !rates.IDR) throw new Error("환율 데이터를 찾지 못했어요");
+        var krwPerUsd = Math.round((1 / rates.USD) * 100) / 100;
+        var krwPerIdr = Math.round((1 / rates.IDR) * 10000) / 10000;
+        var oldUsd = state.fxRates.USD || "";
+        var oldIdr = state.fxRates.IDR || "";
+        var changed = (oldUsd && oldUsd !== String(krwPerUsd)) || (oldIdr && oldIdr !== String(krwPerIdr));
+
+        function applyFetchedRates() {
+          state.fxRates.USD = String(krwPerUsd);
+          state.fxRates.IDR = String(krwPerIdr);
+          state.fxUpdatedAt = Date.now();
+          renderFx();
+          updateCurrencyPreview();
+          renderExpenseList();
+          renderCategorySummary();
+          renderSettlement();
+          renderHeader();
+          scheduleSave();
+          var s = document.getElementById("fx-status");
+          if (s) { s.style.color = "var(--brass)"; s.textContent = "방금 불러왔어요: " + fxUpdatedLabel() + " (출처: open.er-api.com)"; }
+        }
+
+        if (changed) {
+          showConfirmModal(
+            "새로 조회한 환율이 기존과 달라요.\n" +
+            "USD: " + (oldUsd || "-") + "원 → " + krwPerUsd + "원\n" +
+            "IDR: " + (oldIdr || "-") + "원 → " + krwPerIdr + "원\n" +
+            "적용하면 이미 입력된 외화 지출의 원화 환산액과 정산 결과가 모두 새 환율로 다시 계산돼요. 적용할까요?",
+            applyFetchedRates,
+            function () {
+              var s0 = document.getElementById("fx-status");
+              if (s0) { s0.style.color = "var(--ink-soft)"; s0.textContent = "기존 환율을 유지했어요."; }
+            }
+          );
+        } else {
+          applyFetchedRates();
+        }
+      })
+      .catch(function (err) {
+        var s = document.getElementById("fx-status");
+        var reason = err && err.message ? err.message : "알 수 없는 오류";
+        if (s) { s.style.color = "var(--stamp)"; s.textContent = "자동 조회 실패 (" + reason + "). 위 칸에 직접 입력해 주세요."; }
+      });
+  }
+
+  function renderPool() {
+    var locked = isTripLocked();
+    var btn = document.getElementById("pool-toggle-btn");
+    btn.textContent = state.poolEnabled ? "사용 중" : "사용 안 함";
+    btn.className = "btn-toggle" + (state.poolEnabled ? " on" : "");
+    btn.disabled = locked;
+
+    var body = document.getElementById("pool-body");
+    if (!state.poolEnabled) {
+      body.innerHTML = '<p class="muted" style="font-size:14px;">켜면 참여자별 회비 금액을 정하고, 지출을 회비에서 지불한 것으로 처리할 수 있어요.</p>';
+      return;
+    }
+    if (state.members.length === 0) {
+      body.innerHTML = '<p class="muted" style="font-size:14px;">먼저 참여자를 추가해 주세요.</p>';
+      return;
+    }
+    var contribTotal = state.members.reduce(function (s, m) { return s + toNumber(state.contributions[m.id]); }, 0);
+    var poolExpenseTotal = state.expenses.filter(function (e) { return e.payerId === POOL_ID; })
+      .reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+    var poolBalance = contribTotal - poolExpenseTotal;
+
+    var html = '';
+    if (locked) {
+      html += '<p class="muted no-print" style="font-size:13px; margin-bottom:8px;">🔒 완료된 여행이라 회비 금액은 잠겨있어요.</p>';
+    }
+    html += '<div class="no-print">';
+    html += '<div class="row" style="margin-bottom:10px;">';
+    html += '<input type="text" id="pool-target-input" placeholder="목표 총액 (예: 300000)" value="' + esc(form.poolTarget) + '"' + (locked ? " disabled" : "") + ' />';
+    html += '<button class="btn btn-brass-soft" id="pool-autofill-btn"' + (locked ? " disabled" : "") + '>N등분 입력</button>';
+    html += '</div>';
+    html += '<div class="pool-box" style="margin-bottom:10px;">';
+    state.members.forEach(function (m) {
+      html += '<div class="pool-line"><span>' + esc(m.name) + '</span>' +
+        '<input type="text" class="mono" data-contrib="' + m.id + '" value="' + esc(state.contributions[m.id] || "") + '" placeholder="0"' + (locked ? " disabled" : "") + ' /></div>';
+    });
+    html += '</div>';
+    html += '</div>';
+    var contribRows = state.members.filter(function (m) { return toNumber(state.contributions[m.id]) > 0; });
+    if (contribRows.length > 0) {
+      html += '<div class="print-only pool-box" style="margin-bottom:10px;">';
+      contribRows.forEach(function (m) {
+        html += '<div class="pool-line"><span>' + esc(m.name) + '</span><span class="mono">' + formatWon(toNumber(state.contributions[m.id])) + '</span></div>';
+      });
+      html += '</div>';
+    }
+    html += '<div class="card" style="margin-bottom:8px;"><div class="card-row"><span class="muted">걷은 회비</span><span class="mono" id="pool-contrib-total">' + formatWon(contribTotal) + '</span></div></div>';
+    html += '<div class="card" style="margin-bottom:8px;"><div class="card-row"><span class="muted">회비로 쓴 지출</span><span class="mono">' + formatWon(poolExpenseTotal) + '</span></div></div>';
+    var balanceOk = poolBalance >= 0;
+    html += '<div class="card" style="background:' + (balanceOk ? "var(--brass-bg)" : "var(--stamp-soft)") + '; border-color:' + (balanceOk ? "var(--brass-bg)" : "var(--stamp-soft)") + ';"><div class="card-row" style="color:' + (balanceOk ? "var(--brass)" : "var(--stamp)") + '; font-weight:600;"><span>' + (balanceOk ? "남은 회비" : "⚠ 부족한 회비") + '</span><span class="mono" id="pool-balance-val">' + formatWon(Math.abs(poolBalance)) + '</span></div></div>';
+    if (!balanceOk) {
+      html += '<p class="copy-hint" style="color:var(--stamp);">회비보다 지출이 더 많아요. 회비를 더 걷거나, 회비로 처리할 지출을 줄여주세요.</p>';
+    }
+    body.innerHTML = html;
+  }
+
+  function renderExpenseForm() {
+    var box = document.getElementById("expense-form-body");
+    if (state.members.length < 2) {
+      box.innerHTML = '<p class="muted" style="font-size:14px;">정산하려면 참여자가 2명 이상 필요해요.</p>';
+      return;
+    }
+    if (isTripLocked()) {
+      box.innerHTML = '<p class="muted" style="font-size:14px;">🔒 완료 처리된 여행이라 새 지출을 추가할 수 없어요. 위 "여행" 패널에서 진행중으로 전환하면 다시 입력할 수 있어요.</p>';
+      return;
+    }
+    // preserve whatever the user already typed before we rebuild the DOM
+    // (unless we're freshly entering edit mode, in which case formPrefill wins, once)
+    var prevDescEl = document.getElementById("desc-input");
+    var prevAmountEl = document.getElementById("amount-input");
+    var keepDesc = formPrefill ? formPrefill.desc : (prevDescEl ? prevDescEl.value : "");
+    var keepAmount = formPrefill ? formPrefill.amount : (prevAmountEl ? prevAmountEl.value : "");
+    var focusedId = document.activeElement ? document.activeElement.id : null;
+    formPrefill = null;
+
+    var payerOptions = state.members.map(function (m) {
+      return '<option value="' + m.id + '"' + (form.payerId === m.id ? " selected" : "") + '>' + esc(m.name) + ' 결제</option>';
+    }).join("");
+    if (state.poolEnabled) {
+      var poolRemainingForLabel = poolRemainingKRW(editingExpenseId);
+      var poolLabel = "회비로 결제 (남은 " + formatWon(Math.max(poolRemainingForLabel, 0)) + ")";
+      payerOptions += '<option value="' + POOL_ID + '"' + (form.payerId === POOL_ID ? " selected" : "") + '>' + esc(poolLabel) + '</option>';
+    }
+
+    var participantChips = state.members.map(function (m) {
+      var active = form.participants.indexOf(m.id) !== -1;
+      return '<button type="button" class="chip' + (active ? " active" : "") + '" data-toggle-participant="' + m.id + '">' + esc(m.name) + '</button>';
+    }).join("");
+
+    var html = '';
+    html += '<div class="space-y">';
+    if (editingExpenseId) {
+      html += '<div class="pool-line" style="background:var(--brass-bg); border-radius:8px; padding:8px 10px; font-size:12px; color:var(--brass); margin:0;">✎ 지출 항목을 수정하는 중이에요</div>';
+    } else if (RECEIPT_FEATURE_ENABLED) {
+      html += '<div>';
+      html += '<input type="file" id="receipt-input" accept="image/*" capture="environment" style="display:none;" />';
+      html += '<button type="button" class="btn btn-brass-soft" id="receipt-btn" style="width:100%;">📷 영수증 사진으로 채우기</button>';
+      html += '<p class="copy-hint" id="receipt-status"></p>';
+      html += '</div>';
+    }
+    var currencyOptions = CURRENCIES.map(function (c) {
+      return '<option value="' + c + '"' + (form.currency === c ? " selected" : "") + '>' + c + '</option>';
+    }).join("");
+
+    html += '<input type="text" id="desc-input" placeholder="항목 (예: 첫날 저녁 식사)" value="' + esc(keepDesc) + '" />';
+    html += '<div class="row">';
+    html += '<select id="currency-select" style="max-width:90px;">' + currencyOptions + '</select>';
+    html += '<input type="text" id="amount-input" class="mono" placeholder="금액" value="' + esc(keepAmount) + '" />';
+    html += '<select id="payer-select" style="max-width:130px;">' + payerOptions + '</select>';
+    html += '</div>';
+    html += '<p class="copy-hint" id="currency-preview" style="min-height:14px;"></p>';
+    html += '<div id="pool-capacity-area"></div>';
+    html += '<div class="chip-row" style="margin-bottom:0;">';
+    html += '<button type="button" class="chip' + (form.excludeFromSettlement ? " active brass" : "") + '" id="exclude-settlement-btn">🔒 개인 지출 (정산 제외)</button>';
+    html += '</div>';
+    if (form.excludeFromSettlement) {
+      html += '<p class="muted" style="font-size:12px; margin:0;">결제자 본인만의 지출로 기록돼요. 총 지출엔 포함되지만, 다른 사람과 나누지 않고 정산(빚 계산)에서는 빠져요.</p>';
+    } else {
+      html += '<div><div class="muted" style="font-size:12px; margin-bottom:6px;">분배 대상</div><div class="chip-row" id="participant-chips" style="margin-bottom:0;">' + participantChips + '</div></div>';
+      html += '<div class="chip-row" style="margin-bottom:0;">';
+      html += '<button type="button" class="chip' + (form.splitType === "equal" ? " active brass" : "") + '" id="split-equal-btn">균등 분배 (1/N)</button>';
+      html += '<button type="button" class="chip' + (form.splitType === "custom" ? " active brass" : "") + '" id="split-custom-btn">실사용분 입력</button>';
+      html += '</div>';
+    }
+    html += '<div><div class="muted" style="font-size:12px; margin-bottom:6px;">카테고리</div><div class="chip-row" id="category-chips" style="margin-bottom:0;">' +
+      CATEGORIES.map(function (c) {
+        return '<button type="button" class="chip' + (form.category === c ? " active" : "") + '" data-set-category="' + esc(c) + '">' + esc(c) + '</button>';
+      }).join("") + '</div></div>';
+    html += '<div id="custom-shares-body"></div>';
+    html += '<button type="button" class="btn btn-stamp" id="submit-expense-btn">' + (editingExpenseId ? "변경사항 저장" : "+ 지출 추가") + '</button>';
+    if (editingExpenseId) {
+      html += '<button type="button" class="btn-toggle" id="cancel-edit-btn" style="width:100%; text-align:center;">수정 취소</button>';
+    }
+    html += '<p class="form-success" id="form-success">' + esc(formSuccessMsg) + '</p>';
+    html += '<p class="form-error" id="form-error"></p>';
+    html += '</div>';
+    box.innerHTML = html;
+
+    renderCustomShares();
+    updateCurrencyPreview();
+    renderPoolCapacityArea();
+
+    // restore focus if the user was mid-typing in one of these fields
+    if (focusedId === "desc-input" || focusedId === "amount-input") {
+      var el = document.getElementById(focusedId);
+      if (el) {
+        el.focus();
+        var len = el.value.length;
+        el.setSelectionRange(len, len);
+      }
+    }
+  }
+
+  function updateCurrencyPreview() {
+    var previewEl = document.getElementById("currency-preview");
+    if (!previewEl) return;
+    var cur = form.currency;
+    if (cur === "KRW") { previewEl.textContent = ""; return; }
+    var amountInput = document.getElementById("amount-input");
+    var amt = amountInput ? toNumber(amountInput.value) : 0;
+    var rate = fxRate(cur);
+    if (!rate) {
+      previewEl.style.color = "var(--stamp)";
+      previewEl.textContent = "⚠ " + cur + " 환율이 아직 없어요. 위 '환율 설정'에서 먼저 등록해 주세요.";
+      return;
+    }
+    previewEl.style.color = "var(--ink-soft)";
+    previewEl.textContent = amt > 0 ? ("≈ " + formatWon(amt * rate)) : ("1 " + cur + " ≈ " + formatWon(rate));
+  }
+
+  // Checks whether the amount currently typed would overspend the pool, and -- if so --
+  // offers an inline "split into two expenses" assist instead of letting it silently go negative.
+  function renderPoolCapacityArea() {
+    var box = document.getElementById("pool-capacity-area");
+    if (!box) return;
+    if (form.payerId !== POOL_ID || !state.poolEnabled) { box.innerHTML = ""; return; }
+
+    var amountInput = document.getElementById("amount-input");
+    var amountNum = amountInput ? toNumber(amountInput.value) : 0;
+    var remaining = poolRemainingKRW(editingExpenseId);
+
+    if (remaining <= 0) {
+      box.innerHTML = '<p class="copy-hint" style="color:var(--stamp);">⚠ 회비가 이미 소진됐어요 (남은 회비 0원). 결제자를 다른 사람으로 바꿔주세요.</p>';
+      return;
+    }
+    if (amountNum <= 0 || form.currency !== "KRW" && !fxRate(form.currency)) { box.innerHTML = ""; return; }
+
+    var newAmountKRW = toKRW(amountNum, form.currency);
+    if (newAmountKRW <= remaining) { box.innerHTML = ""; return; }
+
+    var html = '<p class="copy-hint" style="color:var(--stamp);">⚠ 남은 회비 ' + formatWon(remaining) + '보다 많아요. 회비로는 거기까지만, 나머지는 아래에서 고른 사람이 결제한 걸로 나눠서 등록해요.</p>';
+    html += '<div class="row" style="margin-top:6px;">';
+    html += '<select id="pool-split-excess-payer">' + state.members.map(function (m) { return '<option value="' + m.id + '">' + esc(m.name) + '</option>'; }).join('') + '</select>';
+    html += '<button type="button" class="btn btn-stamp" id="pool-split-apply-btn" style="width:auto; padding:8px 12px; font-size:12px;">나눠서 등록</button>';
+    html += '</div>';
+    box.innerHTML = html;
+  }
+
+  function applyPoolSplitExpense() {
+    if (guardLocked()) return;
+    var descInput = document.getElementById("desc-input");
+    var amountInput = document.getElementById("amount-input");
+    var excessSelect = document.getElementById("pool-split-excess-payer");
+    var desc = descInput ? descInput.value.trim() : "";
+    var amountNum = amountInput ? toNumber(amountInput.value) : 0;
+
+    if (!desc) { showFormError("항목명을 입력해 주세요."); return; }
+    if (amountNum <= 0) { showFormError("금액을 입력해 주세요."); return; }
+    if (!form.excludeFromSettlement && form.participants.length === 0) {
+      showFormError("분배 대상을 1명 이상 선택해 주세요.");
+      return;
+    }
+    var excessPayerId = excessSelect ? excessSelect.value : null;
+    if (!excessPayerId) return;
+
+    var remaining = poolRemainingKRW(editingExpenseId);
+    var newAmountKRW = toKRW(amountNum, form.currency);
+    if (newAmountKRW <= remaining) { submitExpense(); return; } // shouldn't normally happen -- safety fallback
+
+    var decimals = (CURRENCY_INFO[form.currency] || CURRENCY_INFO.KRW).decimals;
+    function roundTo(n) { var f = Math.pow(10, decimals); return Math.round(n * f) / f; }
+    var poolPortion = roundTo(fromKRW(remaining, form.currency));
+    var excessPortion = roundTo(amountNum - poolPortion);
+    var participantIds = form.excludeFromSettlement ? [form.payerId] : form.participants.slice();
+
+    showConfirmModal(
+      '"' + desc + '"을(를) 두 건으로 나눠 등록할까요?\n① 회비 결제: ' + formatCurrency(poolPortion, form.currency) + ' (회비 잔액 0원 됨)\n② "' + memberName(excessPayerId) + '" 결제: ' + formatCurrency(excessPortion, form.currency),
+      function () {
+        state.expenses.push({
+          id: uid(), desc: desc + " (회비분)", amount: poolPortion, currency: form.currency,
+          payerId: POOL_ID, splitType: "equal", shares: splitEqual(poolPortion, participantIds),
+          category: form.category, excludeFromSettlement: false
+        });
+        state.expenses.push({
+          id: uid(), desc: desc + " (초과분)", amount: excessPortion, currency: form.currency,
+          payerId: excessPayerId, splitType: "equal", shares: splitEqual(excessPortion, participantIds),
+          category: form.category, excludeFromSettlement: false
+        });
+        resetExpenseForm();
+        renderAll();
+        showToast("두 건으로 나눠 등록했어요.");
+        scheduleSave();
+      }
+    );
+  }
+
+  function customTotal() {
+    return Object.keys(form.customShares).reduce(function (s, k) { return s + toNumber(form.customShares[k]); }, 0);
+  }
+
+  function renderCustomShares() {
+    var box = document.getElementById("custom-shares-body");
+    if (!box) return;
+    if (form.excludeFromSettlement || form.splitType !== "custom" || form.participants.length === 0) {
+      box.innerHTML = "";
+      return;
+    }
+    var amountInput = document.getElementById("amount-input");
+    var amountNum = amountInput ? toNumber(amountInput.value) : 0;
+    var html = '<div class="pool-box">';
+    form.participants.forEach(function (id) {
+      html += '<div class="pool-line"><span>' + esc(memberName(id)) + '</span>' +
+        '<input type="text" class="mono" data-custom-share="' + id + '" value="' + esc(form.customShares[id] || "") + '" placeholder="0" /></div>';
+    });
+    html += '<div class="pool-line" style="margin-top:4px; padding-top:8px; border-top:1px solid var(--line); font-size:12px;">' +
+      '<span class="muted">합계</span><span class="mono" id="custom-total-label">' + formatCurrency(customTotal(), form.currency) + ' / ' + formatCurrency(amountNum, form.currency) + '</span></div>';
+    html += '</div>';
+    box.innerHTML = html;
+  }
+
+  function renderExpenseList() {
+    var section = document.getElementById("expense-list-section");
+    var box = document.getElementById("expense-list");
+    if (state.expenses.length === 0) {
+      section.style.display = "none";
+      box.innerHTML = "";
+      return;
+    }
+    section.style.display = "";
+    document.getElementById("expense-count-sub").textContent = "총 " + state.expenses.length + "건 · 최신순";
+    var indexed = state.expenses.map(function (e, i) { return { e: e, realIdx: i }; });
+    var displayList = indexed.slice().reverse(); // newest first
+    box.innerHTML = displayList.map(function (item) {
+      var e = item.e, idx = item.realIdx;
+      var isPoolPaid = e.payerId === POOL_ID;
+      var excluded = isExpenseExcluded(e);
+      var badgeLabel = isPoolPaid ? "🎁 회비 지출" : (e.excludeFromSettlement ? "🔒 개인 지출" : "");
+      var cur = e.currency || "KRW";
+      var namesDetail = excluded
+        ? "정산에서 제외됨"
+        : (e.splitType === "custom"
+          ? e.shares.map(function (s) { return esc(memberName(s.memberId)) + " " + formatCurrency(s.amount, cur); }).join(" · ")
+          : e.shares.map(function (s) { return esc(memberName(s.memberId)); }).join(", "));
+      var isEditing = editingExpenseId === e.id;
+      var cat = e.category && CATEGORIES.indexOf(e.category) !== -1 ? e.category : "기타";
+      var isFirst = idx === state.expenses.length - 1; // newest -- nothing further up to swap with
+      var isLast = idx === 0; // oldest -- nothing further down to swap with
+      var locked = isTripLocked();
+      var amountLabel = formatCurrency(e.amount, cur) +
+        (cur !== "KRW" ? ' <span class="muted" style="font-size:11px;">(≈' + formatWon(toKRW(e.amount, cur)) + ')</span>' : '');
+      return '<div class="card expense-item' + (isEditing ? " editing" : "") + '">' +
+        (locked ? '' :
+        '<div class="reorder-col">' +
+        '<button class="reorder-btn" data-move-up="' + e.id + '" title="위로"' + (isFirst ? " disabled" : "") + '>▲</button>' +
+        '<button class="reorder-btn" data-move-down="' + e.id + '" title="아래로"' + (isLast ? " disabled" : "") + '>▼</button>' +
+        '</div>') +
+        '<div style="flex:1; min-width:0;"><div class="desc">' + esc(e.desc) + ' <span class="badge">' + esc(cat) + '</span>' +
+        (badgeLabel ? ' <span class="badge" style="background:var(--stamp-soft); color:var(--stamp);">' + badgeLabel + '</span>' : '') + '</div>' +
+        '<div class="meta">' + esc(memberName(e.payerId)) + ' 결제 · ' + (excluded ? "정산 제외" : (e.splitType === "equal" ? "균등분배" : "실사용분")) + '</div>' +
+        '<div class="meta" style="margin-top:2px;">' + namesDetail + '</div></div>' +
+        '<div class="right" style="align-items:flex-start;">' +
+        '<span class="mono" style="font-size:14px; white-space:nowrap;">' + amountLabel + '</span>' +
+        (locked ? '' :
+        '<button class="del-btn" data-edit-expense="' + e.id + '" title="수정">✎</button>' +
+        '<button class="del-btn" data-del-expense="' + e.id + '" title="삭제">✕</button>') + '</div>' +
+        '</div>';
+    }).join("");
+  }
+
+  function renderCategorySummary() {
+    var section = document.getElementById("category-summary-section");
+    var body = document.getElementById("category-summary-body");
+    if (state.expenses.length === 0) {
+      section.style.display = "none";
+      body.innerHTML = "";
+      return;
+    }
+    var totals = {};
+    CATEGORIES.forEach(function (c) { totals[c] = 0; });
+    var grandTotal = 0;
+    state.expenses.forEach(function (e) {
+      var cat = e.category && CATEGORIES.indexOf(e.category) !== -1 ? e.category : "기타";
+      var krwAmt = toKRW(e.amount, e.currency || "KRW");
+      totals[cat] += krwAmt;
+      grandTotal += krwAmt;
+    });
+    section.style.display = "";
+    var rows = CATEGORIES
+      .map(function (c) { return { name: c, amt: totals[c] }; })
+      .filter(function (r) { return r.amt > 0; })
+      .sort(function (a, b) { return b.amt - a.amt; });
+
+    var html = '<div class="card">';
+    rows.forEach(function (r) {
+      var pct = grandTotal > 0 ? Math.round((r.amt / grandTotal) * 100) : 0;
+      html += '<div class="cat-row">' +
+        '<div class="cat-row-top"><span>' + esc(r.name) + '</span><span class="mono">' + formatWon(r.amt) + ' · ' + pct + '%</span></div>' +
+        '<div class="cat-bar-track"><div class="cat-bar-fill" style="width:' + pct + '%;"></div></div>' +
+        '</div>';
+    });
+    html += '</div>';
+    body.innerHTML = html;
+  }
+
+  var settleFilter = null; // null = everyone; otherwise array of selected ids
+  var showPoolDeficitBreakdown = false; // opt-in view only -- never auto-applied to the actual settlement math
+
+  function settleFilterAllIds() {
+    return state.members.map(function (m) { return m.id; });
+  }
+
+  function toggleSettleFilter(id) {
+    var allIds = settleFilterAllIds();
+    var current = settleFilter === null ? allIds.slice() : settleFilter.slice();
+    var idx = current.indexOf(id);
+    if (idx === -1) current.push(id); else current.splice(idx, 1);
+    // if everything ends up selected again, go back to "전체" mode
+    settleFilter = (current.length === allIds.length && allIds.every(function (i) { return current.indexOf(i) !== -1; }))
+      ? null
+      : current;
+    renderSettlement();
+  }
+
+  function setSettleFilterAll() {
+    settleFilter = null;
+    renderSettlement();
+  }
+
+  function applyPoolDeficitEqualSplit() {
+    if (guardLocked()) return;
+    if (state.expenses.some(function (e) { return e.isPoolDeficitFix; })) {
+      showToast("이미 부족분 정산용 지출을 등록했어요.");
+      return;
+    }
+    var contribTotal = state.members.reduce(function (s, m) { return s + toNumber(state.contributions[m.id]); }, 0);
+    var poolExpenseTotal = state.expenses.filter(function (e) { return e.payerId === POOL_ID; })
+      .reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+    var deficit = Math.round(poolExpenseTotal - contribTotal);
+    if (deficit <= 0) return;
+    var select = document.getElementById("pool-deficit-payer-select");
+    var payerId = select ? select.value : (state.members[0] && state.members[0].id);
+    if (!payerId) return;
+    var memberIds = state.members.map(function (m) { return m.id; });
+    var shares = splitEqual(deficit, memberIds);
+
+    showConfirmModal(
+      '회비 부족분 ' + formatWon(deficit) + '을 "' + memberName(payerId) + '"이(가) 먼저 냈다고 보고, 참여자 ' + memberIds.length + '명에게 균등하게 나눠 실제 정산(송금 계산)에 반영할까요?',
+      function () {
+        state.expenses.push({
+          id: uid(),
+          desc: "회비 부족분 정산",
+          amount: deficit,
+          currency: "KRW",
+          payerId: payerId,
+          splitType: "equal",
+          shares: shares,
+          category: "기타",
+          excludeFromSettlement: false,
+          isPoolDeficitFix: true
+        });
+        renderAll();
+        scheduleSave();
+        showToast("회비 부족분을 정산에 반영했어요.");
+      }
+    );
+  }
+
+  function renderSettlement() {
+    var subEl = document.getElementById("settlement-sub");
+    var body = document.getElementById("settlement-body");
+
+    if (state.members.length === 0) {
+      subEl.textContent = "";
+      body.innerHTML = '<p class="muted" style="font-size:14px;">참여자를 추가하면 정산 결과가 표시돼요.</p>';
+      return;
+    }
+
+    // 회비(가상 공동경비)는 "찬조금" 성격이라 정산(빚 계산)에 아예 넣지 않는다.
+    // - 걷은 회비/회비로 쓴 지출/남은 회비는 순수 정보 표시용 (가상 회비 섹션 참고)
+    // - 회비로 결제한 지출, 그리고 "개인 지출(정산 제외)" 지출은 모두 계산에서 제외
+    var participantIds = state.members.map(function (m) { return m.id; });
+    var expensesForCalc = state.expenses.filter(function (e) { return !isExpenseExcluded(e); });
+    var result = computeSettlement(participantIds, expensesForCalc);
+    var balance = result.balance;
+
+    var grandTotal = state.expenses.reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+
+    var allIds = settleFilterAllIds();
+    var filterActive = settleFilter !== null;
+    var selectedIds = filterActive ? settleFilter.filter(function (id) { return allIds.indexOf(id) !== -1; }) : allIds;
+
+    // ---- filter chip row (only worth showing once there are 3+ possible people) ----
+    var filterHtml = "";
+    if (allIds.length >= 3) {
+      filterHtml += '<div class="chip-row" id="settle-filter-chips" style="margin-bottom:12px;">';
+      filterHtml += '<button type="button" class="chip' + (!filterActive ? " active" : "") + '" data-settle-filter-all>전체</button>';
+      state.members.forEach(function (m) {
+        var active = selectedIds.indexOf(m.id) !== -1;
+        filterHtml += '<button type="button" class="chip' + (active ? " active brass" : "") + '" data-settle-filter="' + m.id + '">' + esc(m.name) + '</button>';
+      });
+      filterHtml += '</div>';
+    }
+
+    var transfers, leftover;
+    if (!filterActive) {
+      transfers = result.transfers;
+      leftover = [];
+    } else if (selectedIds.length < 2) {
+      transfers = [];
+      leftover = [];
+    } else {
+      var sub = computeSubsetSettlement(balance, selectedIds);
+      transfers = sub.transfers;
+      leftover = sub.leftover;
+    }
+
+    subEl.textContent = transfers.length === 0
+      ? (filterActive ? "선택한 인원끼리는 정산할 내역이 없어요" : "")
+      : transfers.length + "건의 송금으로 정산이 끝나요";
+
+    var html = '<div class="card-row" style="margin-bottom:14px; font-size:14px;"><span class="muted">여행 총 경비</span><span class="mono" style="font-weight:700;">' + formatWon(grandTotal) + '</span></div>';
+
+    if (state.poolEnabled) {
+      var contribTotal = state.members.reduce(function (s, m) { return s + toNumber(state.contributions[m.id]); }, 0);
+      var poolExpenseTotal = state.expenses.filter(function (e) { return e.payerId === POOL_ID; })
+        .reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+      var poolBalanceForSettle = contribTotal - poolExpenseTotal;
+      var poolOk = poolBalanceForSettle >= 0;
+      var contribRowsForSettle = state.members.filter(function (m) { return toNumber(state.contributions[m.id]) > 0; });
+
+      html += '<div class="card" style="margin-bottom:14px;' + (poolOk ? '' : ' border-color:var(--stamp);') + '">';
+      html += '<div class="muted" style="font-size:12px; margin-bottom:8px;">🎁 회비(공동경비) 현황</div>';
+      html += '<div class="card-row" style="margin-bottom:4px;"><span>걷은 회비 (합계)</span><span class="mono">' + formatWon(contribTotal) + '</span></div>';
+      html += '<div class="card-row" style="margin-bottom:4px;"><span>회비로 쓴 지출</span><span class="mono">' + formatWon(poolExpenseTotal) + '</span></div>';
+      html += '<div class="card-row" style="margin-bottom:8px; font-weight:600; color:' + (poolOk ? "var(--brass)" : "var(--stamp)") + ';"><span>' + (poolOk ? "남은 회비" : "⚠ 부족한 회비") + '</span><span class="mono">' + (poolOk ? "" : "-") + formatWon(Math.abs(poolBalanceForSettle)) + '</span></div>';
+      if (contribRowsForSettle.length > 0) {
+        html += '<div class="muted" style="font-size:11px; margin-bottom:4px;">각자 납부액</div>';
+        contribRowsForSettle.forEach(function (m) {
+          html += '<div class="card-row" style="font-size:13px; margin-bottom:2px;"><span>' + esc(m.name) + '</span><span class="mono">' + formatWon(toNumber(state.contributions[m.id])) + '</span></div>';
+        });
+      }
+      if (!poolOk) {
+        var payingCount = state.members.length || 1;
+        var perHead = Math.ceil(Math.abs(poolBalanceForSettle) / payingCount);
+        var alreadyApplied = state.expenses.some(function (e) { return e.isPoolDeficitFix; });
+        html += '<p class="copy-hint" style="color:var(--stamp); margin-top:8px;">※ 이 부족분 ' + formatWon(Math.abs(poolBalanceForSettle)) + '은 아래 송금 금액(개인 정산)에 자동으로는 포함되지 않아요.</p>';
+        html += '<button type="button" class="btn btn-toggle' + (showPoolDeficitBreakdown ? " on" : "") + '" id="pool-deficit-breakdown-btn" style="margin-top:6px; width:auto; padding:7px 12px; font-size:12px;">' +
+          (showPoolDeficitBreakdown ? "인원별 분배 숨기기" : "👥 인원별로 나눠서 보기") + '</button>';
+        if (showPoolDeficitBreakdown) {
+          var deficitShares = splitEqual(Math.abs(poolBalanceForSettle), state.members.map(function (m) { return m.id; }));
+          html += '<div style="margin-top:8px;">';
+          deficitShares.forEach(function (s) {
+            html += '<div class="card-row" style="font-size:13px; margin-bottom:2px;"><span>' + esc(memberName(s.memberId)) + ' 추가 납부</span><span class="mono" style="color:var(--stamp);">' + formatWon(s.amount) + '</span></div>';
+          });
+          html += '</div>';
+          if (alreadyApplied) {
+            html += '<p class="copy-hint" style="margin-top:6px; color:var(--brass);">✓ 이미 부족분 정산용 지출을 등록해서 실제 송금 계산에 반영했어요. (지출 내역에서 "회비 부족분 정산" 항목 확인·삭제 가능)</p>';
+          } else {
+            html += '<div style="margin-top:10px; padding-top:10px; border-top:1px dashed var(--line);">';
+            html += '<div class="muted" style="font-size:11px; margin-bottom:6px;">실제 송금 계산에 반영하려면, 이 부족분을 누가 먼저 충당했는지 골라서 지출로 등록해요.</div>';
+            html += '<div class="row" style="margin-bottom:6px;">';
+            html += '<select id="pool-deficit-payer-select">' + state.members.map(function (m) { return '<option value="' + m.id + '">' + esc(m.name) + '</option>'; }).join('') + '</select>';
+            html += '</div>';
+            html += '<button type="button" class="btn btn-stamp" id="pool-deficit-apply-btn" style="width:auto; padding:8px 14px; font-size:12px;">균등분배 적용 (지출로 등록)</button>';
+            html += '</div>';
+          }
+        }
+      }
+      html += '</div>';
+    }
+
+    html += filterHtml;
+    if (selectedIds.length < 2) {
+      html += '<div class="empty-note">정산을 보려면 2명 이상 선택해 주세요.</div>';
+    } else if (transfers.length === 0 && leftover.length === 0) {
+      html += '<div class="empty-note">정산할 내역이 없어요.</div>';
+    } else {
+      if (transfers.length) {
+        html += '<div class="space-y">';
+        transfers.forEach(function (t) {
+          html += '<div class="transfer-card">' +
+            '<div class="transfer-left">' + esc(memberName(t.from)) + ' → ' + esc(memberName(t.to)) + '</div>' +
+            '<div class="transfer-right" style="background:var(--stamp-soft); color:var(--stamp);">' + formatWon(t.amount) + '</div>' +
+            '</div>';
+        });
+        html += '</div>';
+      }
+      if (filterActive && leftover.length) {
+        html += '<div class="pool-box" style="margin-top:10px;">';
+        html += '<div class="muted" style="font-size:12px; margin-bottom:6px;">선택한 인원 밖과 얽혀 있어 여기서는 못 맞춘 금액</div>';
+        leftover.forEach(function (l) {
+          var color = l.amt > 0 ? "var(--brass)" : "var(--stamp)";
+          html += '<div class="pool-line"><span>' + esc(memberName(l.id)) + '</span>' +
+            '<span class="mono" style="color:' + color + ';">' + (l.amt > 0 ? "+" : "") + formatWon(l.amt) + '</span></div>';
+        });
+        html += '</div>';
+      }
+    }
+
+    var balanceList = state.members.filter(function (m) {
+      return selectedIds.indexOf(m.id) !== -1 && Math.round(balance[m.id] || 0) !== 0;
+    });
+    if (balanceList.length > 0) {
+      html += '<div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line);">';
+      html += '<div class="muted" style="font-size:12px; margin-bottom:8px;">개인별 잔액 (+받을 돈 / −보낼 돈)' + (filterActive ? ' · 전체 기준' : '') + '</div>';
+      balanceList.forEach(function (m) {
+        var b = Math.round(balance[m.id] || 0);
+        var color = b > 0 ? "var(--brass)" : "var(--stamp)";
+        html += '<div class="card-row" style="margin-bottom:4px;"><span>' + esc(m.name) + '</span>' +
+          '<span class="mono" style="color:' + color + ';">' + (b > 0 ? "+" : "") + formatWon(b) + '</span></div>';
+      });
+      html += '</div>';
+    }
+    body.innerHTML = html;
+  }
+
+  // ---------- shareable plain-text settlement summary (for KakaoTalk etc.) ----------
+  function buildShareText() {
+    var lines = ["[여행 정산 결과]"];
+    var total = state.expenses.reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+    lines.push("총 지출: " + formatWon(total) + " (원화 환산)");
+    lines.push("");
+
+    if (state.expenses.length > 0) {
+      lines.push("지출 내역 (" + state.expenses.length + "건)");
+      var MAX_LIST = 20;
+      state.expenses.slice(0, MAX_LIST).forEach(function (e) {
+        var cur = e.currency || "KRW";
+        var cat = e.category && CATEGORIES.indexOf(e.category) !== -1 ? e.category : "기타";
+        var excluded = isExpenseExcluded(e);
+        var tag = e.payerId === POOL_ID ? " (회비 지출, 정산 제외)" : (e.excludeFromSettlement ? " (개인 지출, 정산 제외)" : "");
+        var amtStr = formatCurrency(e.amount, cur) + (cur !== "KRW" ? " ≈" + formatWon(toKRW(e.amount, cur)) : "");
+        lines.push("· " + e.desc + " [" + cat + "] — " + memberName(e.payerId) + " 결제 " + amtStr + tag);
+        if (!excluded) {
+          var breakdown = e.shares.map(function (s) { return memberName(s.memberId) + " " + formatCurrency(s.amount, cur); }).join(", ");
+          lines.push("   ㄴ " + (e.splitType === "equal" ? "균등분배: " : "실사용분: ") + breakdown);
+        }
+      });
+      if (state.expenses.length > MAX_LIST) {
+        lines.push("· 외 " + (state.expenses.length - MAX_LIST) + "건 더 있음 (앱에서 전체 확인)");
+      }
+      lines.push("");
+    }
+
+    if (state.poolEnabled) {
+      var contribTotal = state.members.reduce(function (s, m) { return s + toNumber(state.contributions[m.id]); }, 0);
+      var poolSpent = state.expenses.filter(function (e) { return e.payerId === POOL_ID; }).reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+      var poolLeft = contribTotal - poolSpent;
+      lines.push("회비(찬조금) 현황");
+      lines.push("· 걷은 회비: " + formatWon(contribTotal) + " / 쓴 지출: " + formatWon(poolSpent) + " / " + (poolLeft >= 0 ? "남은 회비: " + formatWon(poolLeft) : "⚠ 부족한 회비: " + formatWon(Math.abs(poolLeft))));
+      var contribRows = state.members.filter(function (m) { return toNumber(state.contributions[m.id]) > 0; });
+      contribRows.forEach(function (m) {
+        lines.push("  ㄴ " + m.name + " 납부: " + formatWon(toNumber(state.contributions[m.id])));
+      });
+      if (poolLeft < 0) {
+        lines.push("  ※ 이 부족분은 아래 개인 정산 금액에는 포함되지 않았어요. 회비를 추가로 걷어야 해요.");
+      }
+      lines.push("");
+    }
+
+    var participantIds = state.members.map(function (m) { return m.id; });
+    var expensesForCalc = state.expenses.filter(function (e) { return !isExpenseExcluded(e); });
+    var result = computeSettlement(participantIds, expensesForCalc);
+
+    lines.push("개인별 잔액 (+받을 돈 / −보낼 돈)");
+    state.members.forEach(function (m) {
+      var b = Math.round(result.balance[m.id] || 0);
+      lines.push("· " + m.name + ": " + (b === 0 ? "0원" : (b > 0 ? "+" : "") + formatWon(b)));
+    });
+    lines.push("");
+    lines.push("송금 안내");
+    if (result.transfers.length === 0) {
+      lines.push("정산할 내역이 없어요.");
+    } else {
+      result.transfers.forEach(function (t) {
+        lines.push("· " + memberName(t.from) + " → " + memberName(t.to) + " " + formatWon(t.amount));
+      });
+    }
+    return lines.join("\n");
+  }
+
+  function copyShareText() {
+    var text = buildShareText();
+    var hint = document.getElementById("share-text-hint");
+    var done = function () { if (hint) { hint.style.color = "var(--brass)"; hint.textContent = "복사됐어요. 카톡 등에 붙여넣어 공유해 주세요."; } };
+    var fail = function () {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand("copy");
+        done();
+      } catch (e) {
+        if (hint) { hint.style.color = "var(--stamp)"; hint.textContent = "자동 복사에 실패했어요. 다시 시도해 주세요."; }
+      }
+      document.body.removeChild(ta);
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(fail);
+      } else {
+        fail();
+      }
+    } catch (e) {
+      fail();
+    }
+  }
+
+  function openPrintView() {
+    // always print the full (unfiltered) picture, regardless of what filter is on screen
+    settleFilter = null;
+    renderSettlement();
+    var ts = document.getElementById("print-timestamp");
+    if (ts) {
+      var now = new Date();
+      var pad = function (n) { return String(n).padStart(2, "0"); };
+      ts.textContent = "출력: " + now.getFullYear() + "." + pad(now.getMonth() + 1) + "." + pad(now.getDate()) + " " + pad(now.getHours()) + ":" + pad(now.getMinutes());
+    }
+    setTimeout(function () {
+      try {
+        window.print();
+      } catch (e) {
+        window.alert("이 화면에서는 인쇄창을 열 수 없어요. 홈 화면(다운로드)에 저장한 버전에서 다시 시도해 주세요.");
+      }
+    }, 50);
+  }
+
+  // ---------- actions ----------
+  function addMember() {
+    if (guardLocked()) return;
+    var input = document.getElementById("member-name-input");
+    var name = (input.value || "").trim();
+    if (!name) return;
+    if (state.members.some(function (m) { return m.name === name; })) return;
+    var newMember = { id: uid(), name: name };
+    state.members.push(newMember);
+    input.value = "";
+    syncFormWithMembers();
+
+    var missingEqual = state.expenses.filter(function (e) {
+      return !isExpenseExcluded(e) && e.splitType === "equal" && !e.shares.some(function (s) { return s.memberId === newMember.id; });
+    });
+    var missingCustom = state.expenses.filter(function (e) {
+      return !isExpenseExcluded(e) && e.splitType === "custom" && !e.shares.some(function (s) { return s.memberId === newMember.id; });
+    });
+    retroPrompt = missingEqual.length > 0
+      ? { memberId: newMember.id, name: newMember.name, equalCount: missingEqual.length, customCount: missingCustom.length }
+      : null;
+
+    renderAll();
+    scheduleSave();
+  }
+
+  function applyRetro() {
+    if (!retroPrompt) return;
+    var id = retroPrompt.memberId;
+    state.expenses.forEach(function (e) {
+      if (!isExpenseExcluded(e) && e.splitType === "equal" && !e.shares.some(function (s) { return s.memberId === id; })) {
+        var ids = e.shares.map(function (s) { return s.memberId; }).concat([id]);
+        e.shares = splitEqual(e.amount, ids);
+      }
+    });
+    retroPrompt = null;
+    renderAll();
+    scheduleSave();
+  }
+
+  function dismissRetro() {
+    retroPrompt = null;
+    renderRetroPrompt();
+  }
+
+  function removeMember(id) {
+    if (guardLocked()) return;
+    var member = state.members.filter(function (m) { return m.id === id; })[0];
+    if (!member) return;
+    var relatedExpenses = state.expenses.filter(function (e) { return e.payerId === id; });
+
+    function doRemove() {
+      var snapshot = {
+        kind: "member",
+        member: member,
+        expenses: relatedExpenses.map(function (e) { return JSON.parse(JSON.stringify(e)); }),
+        contribution: state.contributions[id]
+      };
+      state.members = state.members.filter(function (m) { return m.id !== id; });
+      state.expenses = state.expenses.filter(function (e) { return e.payerId !== id; });
+      delete state.contributions[id];
+      if (form.payerId === id) form.payerId = "";
+      form.participants = form.participants.filter(function (p) { return p !== id; });
+      syncFormWithMembers();
+      renderAll();
+      scheduleSave();
+      pushUndo(snapshot);
+    }
+
+    if (relatedExpenses.length > 0) {
+      showConfirmModal(
+        '"' + member.name + '"을(를) 삭제하면 결제한 지출 ' + relatedExpenses.length + '건도 함께 삭제돼요.\n계속할까요? (삭제 후 8초 안에는 "실행취소"로 되돌릴 수 있어요)',
+        doRemove
+      );
+    } else {
+      doRemove();
+    }
+  }
+
+  function togglePool() {
+    if (guardLocked()) return;
+    state.poolEnabled = !state.poolEnabled;
+    renderPool();
+    renderExpenseForm();
+    renderSettlement();
+    scheduleSave();
+  }
+
+  function autofillPool() {
+    if (guardLocked()) return;
+    var input = document.getElementById("pool-target-input");
+    form.poolTarget = input ? input.value : "";
+    var total = toNumber(form.poolTarget);
+    if (!total || state.members.length === 0) return;
+    var shares = splitEqual(total, state.members.map(function (m) { return m.id; }));
+    var obj = {};
+    shares.forEach(function (s) { obj[s.memberId] = String(s.amount); });
+    state.contributions = obj;
+    renderPool();
+    renderSettlement();
+    scheduleSave();
+  }
+
+  function updateContribution(id, val) {
+    if (guardLocked()) return;
+    state.contributions[id] = val;
+    // targeted update, no full rerender to keep focus
+    var contribTotal = state.members.reduce(function (s, m) { return s + toNumber(state.contributions[m.id]); }, 0);
+    var totalEl = document.getElementById("pool-contrib-total");
+    if (totalEl) totalEl.textContent = formatWon(contribTotal);
+    var poolExpenseTotal = state.expenses.filter(function (e) { return e.payerId === POOL_ID; })
+      .reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+    var balEl = document.getElementById("pool-balance-val");
+    if (balEl) balEl.textContent = formatWon(Math.abs(contribTotal - poolExpenseTotal));
+    renderSettlement();
+    scheduleSave();
+  }
+
+  function toggleParticipant(id) {
+    var idx = form.participants.indexOf(id);
+    if (idx === -1) form.participants.push(id);
+    else form.participants.splice(idx, 1);
+    renderExpenseForm();
+  }
+
+  function setSplitType(type) {
+    form.splitType = type;
+    renderExpenseForm();
+  }
+
+  function toggleExcludeFromSettlement() {
+    form.excludeFromSettlement = !form.excludeFromSettlement;
+    if (form.excludeFromSettlement) {
+      form.prevParticipants = form.participants;
+      form.participants = form.payerId ? [form.payerId] : [];
+    } else {
+      form.participants = form.prevParticipants || state.members.map(function (m) { return m.id; });
+      form.prevParticipants = null;
+    }
+    renderExpenseForm();
+  }
+
+  function setCategory(cat) {
+    form.category = cat;
+    renderExpenseForm();
+  }
+
+  function renderCategoryChipsOnly() {
+    var box = document.getElementById("category-chips");
+    if (!box) return;
+    box.innerHTML = CATEGORIES.map(function (c) {
+      return '<button type="button" class="chip' + (form.category === c ? " active" : "") + '" data-set-category="' + esc(c) + '">' + esc(c) + '</button>';
+    }).join("");
+  }
+
+  function updateCustomShare(id, val) {
+    form.customShares[id] = val;
+    var amountInput = document.getElementById("amount-input");
+    var amountNum = amountInput ? toNumber(amountInput.value) : 0;
+    var label = document.getElementById("custom-total-label");
+    if (label) label.textContent = formatCurrency(customTotal(), form.currency) + " / " + formatCurrency(amountNum, form.currency);
+  }
+
+  function showFormError(msg) {
+    var el = document.getElementById("form-error");
+    if (el) el.textContent = msg;
+  }
+
+  // ---------- receipt photo auto-fill (Claude API vision) ----------
+  function readFileAsBase64(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        var result = reader.result;
+        var comma = result.indexOf(",");
+        resolve(comma !== -1 ? result.slice(comma + 1) : result);
+      };
+      reader.onerror = function () { reject(new Error("파일을 읽지 못했어요.")); };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function setReceiptStatus(msg, isError) {
+    var el = document.getElementById("receipt-status");
+    if (el) { el.textContent = msg; el.style.color = isError ? "var(--stamp)" : "var(--brass)"; }
+  }
+
+  function handleReceiptFile(file) {
+    if (!file) return;
+    setReceiptStatus("영수증을 분석하고 있어요…", false);
+    readFileAsBase64(file)
+      .then(function (base64) {
+        var mediaType = file.type || "image/jpeg";
+        return fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-6",
+            max_tokens: 500,
+            messages: [
+              {
+                role: "user",
+                content: [
+                  { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
+                  {
+                    type: "text",
+                    text: "이 영수증 사진을 보고 항목명, 총 결제 금액, 카테고리를 읽어줘. 항목명은 가게 이름이나 대표 메뉴로 짧게(20자 이내), 금액은 원화 숫자만(콤마·단위 없이), 카테고리는 반드시 [\"식비\", \"숙소\", \"교통\", \"쇼핑\", \"기타\"] 중 하나. 다른 설명 없이 아래 JSON 형식으로만 답해: {\"desc\": \"가게명 또는 대표 항목\", \"amount\": 12345, \"category\": \"식비\"}"
+                  }
+                ]
+              }
+            ]
+          })
+        }).then(function (res) {
+          if (!res.ok) {
+            throw new Error("서버 응답 오류 (상태 코드 " + res.status + ")");
+          }
+          return res.json();
+        });
+      })
+      .then(function (data) {
+        var textBlock = (data && Array.isArray(data.content))
+          ? data.content.filter(function (b) { return b.type === "text"; })[0]
+          : null;
+        if (!textBlock || !textBlock.text) throw new Error("응답에서 결과를 찾지 못했어요.");
+        var cleaned = textBlock.text.replace(/```json|```/g, "").trim();
+        var parsed = JSON.parse(cleaned);
+        var descEl = document.getElementById("desc-input");
+        var amountEl = document.getElementById("amount-input");
+        if (descEl && parsed.desc) descEl.value = String(parsed.desc).trim().slice(0, 40);
+        var amt = Math.round(Number(parsed.amount));
+        if (amountEl && amt > 0) amountEl.value = String(amt);
+        if (parsed.category && CATEGORIES.indexOf(parsed.category) !== -1) {
+          form.category = parsed.category;
+        }
+        if (form.splitType === "custom") renderCustomShares();
+        renderCategoryChipsOnly();
+        setReceiptStatus("영수증에서 읽었어요. 결제자·분배 대상을 확인하고 추가해 주세요.", false);
+      })
+      .catch(function (err) {
+        var reason = err && err.message ? err.message : "알 수 없는 오류";
+        setReceiptStatus(
+          "영수증을 읽지 못했어요 (" + reason + "). 클로드 설정 > Capabilities에서 'Create AI-powered artifacts'가 켜져 있는지 확인해 주세요. 안 되면 항목명·금액을 직접 입력해도 돼요.",
+          true
+        );
+      });
+  }
+
+  function submitExpense() {
+    if (guardLocked()) return;
+    var descInput = document.getElementById("desc-input");
+    var amountInput = document.getElementById("amount-input");
+    var payerSelect = document.getElementById("payer-select");
+    var currencySelect = document.getElementById("currency-select");
+    var desc = descInput ? descInput.value.trim() : "";
+    var amountNum = amountInput ? toNumber(amountInput.value) : 0;
+    form.payerId = payerSelect ? payerSelect.value : form.payerId;
+    form.currency = currencySelect ? currencySelect.value : form.currency;
+
+    if (!desc) { showFormError("항목명을 입력해 주세요."); return; }
+    if (amountNum <= 0) { showFormError("금액을 입력해 주세요."); return; }
+    if (!form.payerId) { showFormError("결제자를 선택해 주세요."); return; }
+    if (form.currency !== "KRW" && !fxRate(form.currency)) {
+      if (!fxPanelOpen) { fxPanelOpen = true; renderFx(); }
+      showFormError("먼저 위 '환율 설정'에서 " + form.currency + " 환율을 등록해 주세요.");
+      return;
+    }
+    if (!form.excludeFromSettlement && form.participants.length === 0) {
+      showFormError("분배 대상을 1명 이상 선택해 주세요.");
+      return;
+    }
+    if (!form.excludeFromSettlement && form.splitType === "custom" && customTotal() !== amountNum) {
+      showFormError("실사용분 합계가 총 금액과 일치해야 해요.");
+      return;
+    }
+    showFormError("");
+
+    function finalizeSubmit() {
+      var shares = form.excludeFromSettlement
+        ? [{ memberId: form.payerId, amount: amountNum }]
+        : (form.splitType === "equal"
+          ? splitEqual(amountNum, form.participants)
+          : form.participants.map(function (id) { return { memberId: id, amount: toNumber(form.customShares[id]) }; }));
+
+      var isEdit = !!editingExpenseId;
+      if (editingExpenseId) {
+        var target = state.expenses.filter(function (e) { return e.id === editingExpenseId; })[0];
+        if (target) {
+          target.desc = desc;
+          target.amount = amountNum;
+          target.currency = form.currency;
+          target.payerId = form.payerId;
+          target.splitType = form.splitType;
+          target.shares = shares;
+          target.category = form.category;
+          target.excludeFromSettlement = form.excludeFromSettlement;
+        }
+        editingExpenseId = null;
+      } else {
+        state.expenses.push({
+          id: uid(),
+          desc: desc,
+          amount: amountNum,
+          currency: form.currency,
+          payerId: form.payerId,
+          splitType: form.splitType,
+          shares: shares,
+          category: form.category,
+          excludeFromSettlement: form.excludeFromSettlement
+        });
+      }
+
+      var successMsg = (isEdit ? "✓ 수정됐어요: " : "✓ 추가됐어요: ") + desc + " " + formatCurrency(amountNum, form.currency);
+      resetExpenseForm();
+      renderAll();
+      showInlineSuccess(successMsg);
+      showToast(successMsg);
+      scheduleSave();
+    }
+
+    // paying from the pool (회비)? never let a single expense push it negative --
+    // block and point at the "나눠서 등록" assist instead.
+    if (form.payerId === POOL_ID && state.poolEnabled) {
+      var remaining = poolRemainingKRW(editingExpenseId);
+      if (remaining <= 0) {
+        showFormError("회비가 이미 소진됐어요. 결제자를 다른 사람으로 선택해 주세요.");
+        return;
+      }
+      var newAmountKRW = toKRW(amountNum, form.currency);
+      if (newAmountKRW > remaining) {
+        showFormError("남은 회비(" + formatWon(remaining) + ")보다 많아요. 아래 '나눠서 등록' 버튼으로 나눠서 등록해 주세요.");
+        renderPoolCapacityArea();
+        return;
+      }
+    }
+    finalizeSubmit();
+  }
+
+  function removeExpense(id) {
+    if (guardLocked()) return;
+    var target = state.expenses.filter(function (e) { return e.id === id; })[0];
+    if (!target) return;
+    showConfirmModal('"' + target.desc + '" 지출을 삭제할까요?', function () {
+      state.expenses = state.expenses.filter(function (e) { return e.id !== id; });
+      if (editingExpenseId === id) {
+        editingExpenseId = null;
+        resetExpenseForm();
+      }
+      renderAll();
+      scheduleSave();
+      pushUndo({ kind: "expense", expense: JSON.parse(JSON.stringify(target)) });
+    });
+  }
+
+  function moveExpense(id, direction) {
+    if (guardLocked()) return;
+    var idx = -1;
+    for (var i = 0; i < state.expenses.length; i++) {
+      if (state.expenses[i].id === id) { idx = i; break; }
+    }
+    if (idx === -1) return;
+    var target = idx + direction;
+    if (target < 0 || target >= state.expenses.length) return;
+    var tmp = state.expenses[idx];
+    state.expenses[idx] = state.expenses[target];
+    state.expenses[target] = tmp;
+    renderExpenseList();
+    scheduleSave();
+  }
+
+  function startEditExpense(id) {
+    var target = state.expenses.filter(function (e) { return e.id === id; })[0];
+    if (!target) return;
+    editingExpenseId = id;
+    form.payerId = target.payerId;
+    form.splitType = target.splitType;
+    form.participants = target.shares.map(function (s) { return s.memberId; });
+    form.customShares = {};
+    if (target.splitType === "custom") {
+      target.shares.forEach(function (s) { form.customShares[s.memberId] = String(s.amount); });
+    }
+    form.category = (target.category && CATEGORIES.indexOf(target.category) !== -1) ? target.category : DEFAULT_CATEGORY;
+    form.currency = (target.currency && CURRENCIES.indexOf(target.currency) !== -1) ? target.currency : "KRW";
+    form.excludeFromSettlement = !!target.excludeFromSettlement;
+    form.prevParticipants = null;
+    formPrefill = { desc: target.desc, amount: String(target.amount) };
+    renderExpenseForm();
+    var box = document.getElementById("expense-form-body");
+    if (box && box.scrollIntoView) box.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function cancelEditExpense() {
+    editingExpenseId = null;
+    resetExpenseForm();
+    renderExpenseForm();
+  }
+
+  // ---------- backup / restore (manual fallback) ----------
+  var backupOpen = false;
+
+  function renderBackupSection() {
+    var btn = document.getElementById("backup-toggle-btn");
+    var body = document.getElementById("backup-body");
+    btn.textContent = backupOpen ? "닫기" : "열기";
+    btn.className = "btn-toggle" + (backupOpen ? " on" : "");
+    body.style.display = backupOpen ? "" : "none";
+    if (!backupOpen) return;
+
+    var html = '';
+    html += '<div class="muted" style="font-size:12px; margin-bottom:6px;">현재 데이터 (복사해서 보관하세요)</div>';
+    html += '<textarea class="backup-area" id="backup-json-area" readonly></textarea>';
+    html += '<div class="row" style="margin-top:8px;">';
+    html += '<button type="button" class="btn btn-brass-soft" id="backup-copy-btn" style="width:100%;">텍스트 복사</button>';
+    html += '</div>';
+    html += '<p class="copy-hint" id="backup-copy-hint"></p>';
+    html += '<div class="muted" style="font-size:12px; margin:14px 0 6px;">백업 텍스트 붙여넣어 복원</div>';
+    html += '<textarea class="backup-area" id="restore-json-area" placeholder="여기에 백업 텍스트를 붙여넣으세요"></textarea>';
+    html += '<div class="row" style="margin-top:8px;">';
+    html += '<button type="button" class="btn btn-dark" id="restore-btn" style="width:100%;">이 텍스트로 복원</button>';
+    html += '</div>';
+    html += '<p class="copy-hint" id="restore-hint"></p>';
+    html += '<div class="row" style="margin-top:18px; padding-top:14px; border-top:1px dashed var(--line);">';
+    html += '<button type="button" class="btn" id="reset-all-btn" style="width:100%; background:var(--stamp-soft); color:var(--stamp);">⚠ 전체 데이터 초기화</button>';
+    html += '</div>';
+    body.innerHTML = html;
+    renderBackupText();
+  }
+
+  function renderBackupText() {
+    if (!backupOpen) return;
+    var area = document.getElementById("backup-json-area");
+    if (area) area.value = JSON.stringify(state);
+  }
+
+  function copyBackupText() {
+    var area = document.getElementById("backup-json-area");
+    var hint = document.getElementById("backup-copy-hint");
+    if (!area) return;
+    var text = area.value;
+    var done = function () { if (hint) hint.textContent = "복사됐어요."; };
+    var fail = function () {
+      area.focus();
+      area.select();
+      try {
+        document.execCommand("copy");
+        done();
+      } catch (e) {
+        if (hint) hint.textContent = "자동 복사가 안 되면, 텍스트를 길게 눌러 직접 복사해 주세요.";
+      }
+    };
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(fail);
+      } else {
+        fail();
+      }
+    } catch (e) {
+      fail();
+    }
+  }
+
+  function restoreFromBackup() {
+    if (guardLocked()) return;
+    var area = document.getElementById("restore-json-area");
+    var hint = document.getElementById("restore-hint");
+    if (!area) return;
+    var raw = area.value.trim();
+    if (!raw) {
+      if (hint) { hint.textContent = "붙여넣은 텍스트가 없어요."; hint.style.color = "var(--stamp)"; }
+      return;
+    }
+    try {
+      var data = JSON.parse(raw);
+      state.members = Array.isArray(data.members) ? data.members : [];
+      state.expenses = Array.isArray(data.expenses) ? data.expenses : [];
+      state.poolEnabled = !!data.poolEnabled;
+      state.contributions = (data.contributions && typeof data.contributions === "object") ? data.contributions : {};
+      state.fxRates = (data.fxRates && typeof data.fxRates === "object") ? data.fxRates : {};
+      state.fxUpdatedAt = data.fxUpdatedAt || null;
+      prevMemberIds = [];
+      syncFormWithMembers();
+      resetExpenseForm();
+      renderAll();
+      scheduleSave();
+      if (hint) { hint.textContent = "복원됐어요."; hint.style.color = "var(--brass)"; }
+    } catch (e) {
+      if (hint) { hint.textContent = "텍스트 형식이 올바르지 않아요."; hint.style.color = "var(--stamp)"; }
+    }
+  }
+
+  function resetAllData() {
+    if (guardLocked()) return;
+    var tripName = (currentTripEntry() || {}).name || "이 여행";
+    showConfirmModal('"' + tripName + '"의 모든 데이터(참여자·지출·회비·환율)를 지울까요? 다른 여행에는 영향 없어요. 이 작업은 되돌릴 수 없어요.', function () {
+      clearInMemoryState();
+      syncFormWithMembers();
+      resetExpenseForm();
+      renderAll();
+      scheduleSave();
+      var hint = document.getElementById("restore-hint");
+      if (hint) { hint.textContent = "\"" + tripName + "\" 데이터를 초기화했어요."; hint.style.color = "var(--brass)"; }
+    });
+  }
+
+  function toggleBackup() {
+    backupOpen = !backupOpen;
+    renderBackupSection();
+  }
+
+  // ---------- event wiring (delegation, attached once) ----------
+  function initEvents() {
+    document.getElementById("trip-panel-toggle-btn").addEventListener("click", toggleTripPanel);
+    document.getElementById("trip-panel-body").addEventListener("click", function (e) {
+      if (e.target.id === "trip-meta-save-btn") { saveTripMeta(); return; }
+      if (e.target.id === "new-trip-btn") { createNewTrip(); return; }
+      var switchBtn = e.target.closest("[data-switch-trip]");
+      if (switchBtn) { switchTrip(switchBtn.getAttribute("data-switch-trip")); return; }
+      var statusBtn = e.target.closest("[data-toggle-trip-status]");
+      if (statusBtn) { toggleTripStatus(statusBtn.getAttribute("data-toggle-trip-status")); return; }
+      var delBtn = e.target.closest("[data-delete-trip]");
+      if (delBtn) { deleteTrip(delBtn.getAttribute("data-delete-trip")); return; }
+      var cloudShareBtn = e.target.closest("[data-cloud-share]");
+      if (cloudShareBtn) { enableCloudSync(cloudShareBtn.getAttribute("data-cloud-share")); return; }
+      var cloudCopyBtn = e.target.closest("[data-cloud-copy]");
+      if (cloudCopyBtn) { copyCloudLink(cloudCopyBtn.getAttribute("data-cloud-copy")); return; }
+    });
+    var banner = document.getElementById("startup-banner");
+    if (banner) {
+      banner.addEventListener("click", function (e) {
+        if (e.target.id === "startup-banner-dismiss") { startupBannerDismissed = true; renderStartupBanner(); return; }
+        var switchBtn = e.target.closest("[data-switch-trip]");
+        if (switchBtn) { switchTrip(switchBtn.getAttribute("data-switch-trip")); return; }
+      });
+    }
+    document.getElementById("undo-bar").addEventListener("click", function (e) {
+      if (e.target.id === "undo-btn") undoLastDelete();
+    });
+    document.getElementById("confirm-cancel-btn").addEventListener("click", function () { hideConfirmModal(true); });
+    document.getElementById("confirm-ok-btn").addEventListener("click", function () {
+      var cb = confirmOkCallback;
+      hideConfirmModal(false);
+      if (cb) cb();
+    });
+    document.getElementById("confirm-overlay").addEventListener("click", function (e) {
+      if (e.target.id === "confirm-overlay") hideConfirmModal(true);
+    });
+
+    document.getElementById("add-member-btn").addEventListener("click", addMember);
+    document.getElementById("member-name-input").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); addMember(); }
+    });
+    document.getElementById("member-chips").addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-remove-member]");
+      if (btn) removeMember(btn.getAttribute("data-remove-member"));
+    });
+    document.getElementById("retro-prompt").addEventListener("click", function (e) {
+      if (e.target.closest("[data-retro-apply]")) applyRetro();
+      if (e.target.closest("[data-retro-dismiss]")) dismissRetro();
+    });
+
+    document.getElementById("fx-panel-toggle-btn").addEventListener("click", toggleFxPanel);
+    document.getElementById("fx-body").addEventListener("click", function (e) {
+      if (e.target.id === "fx-autofetch-btn") fetchFxRates();
+    });
+    document.getElementById("fx-body").addEventListener("input", function (e) {
+      var el = e.target;
+      if (el.id !== "fx-usd-input" && el.id !== "fx-idr-input") return;
+      var status = document.getElementById("fx-status");
+      if (!status) return;
+      var v = toNumber(el.value);
+      if (v > 0) {
+        status.style.color = "var(--ink-soft)";
+        status.textContent = "다른 곳을 누르면 저장돼요…";
+      } else {
+        status.style.color = "var(--stamp)";
+        status.textContent = "환율 값을 입력해 주세요.";
+      }
+    });
+    document.getElementById("fx-body").addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && (e.target.id === "fx-usd-input" || e.target.id === "fx-idr-input")) {
+        e.preventDefault();
+        e.target.blur();
+      }
+    });
+    document.getElementById("fx-body").addEventListener("focusout", function (e) {
+      if (guardLocked()) { renderFx(); return; }
+      var el = e.target;
+      var key = el.id === "fx-usd-input" ? "USD" : (el.id === "fx-idr-input" ? "IDR" : null);
+      if (!key) return;
+      var oldVal = state.fxRates[key] || "";
+      var newVal = el.value;
+
+      function commitFxValue() {
+        state.fxRates[key] = newVal;
+        state.fxUpdatedAt = null; // manual edit -- no longer reflects an auto-fetch timestamp
+        renderFx();
+        updateCurrencyPreview();
+        renderExpenseList();
+        renderCategorySummary();
+        renderSettlement();
+        renderHeader();
+        scheduleSave();
+      }
+
+      if (oldVal && oldVal !== newVal && toNumber(newVal) > 0) {
+        showConfirmModal(
+          "환율을 1 " + key + " = " + oldVal + "원 → " + newVal + "원 으로 바꿀까요?\n" +
+          "이미 입력된 " + key + " 지출의 원화 환산액과 정산 결과가 모두 새 환율로 다시 계산돼요.",
+          commitFxValue,
+          function () { renderFx(); }
+        );
+        return;
+      }
+      commitFxValue();
+    });
+
+    document.getElementById("pool-toggle-btn").addEventListener("click", togglePool);
+    document.getElementById("pool-body").addEventListener("click", function (e) {
+      if (e.target.id === "pool-autofill-btn") autofillPool();
+    });
+    document.getElementById("pool-body").addEventListener("input", function (e) {
+      var el = e.target;
+      if (el.hasAttribute("data-contrib")) {
+        updateContribution(el.getAttribute("data-contrib"), el.value);
+      } else if (el.id === "pool-target-input") {
+        form.poolTarget = el.value;
+      }
+    });
+
+    document.getElementById("expense-form-body").addEventListener("click", function (e) {
+      var t = e.target;
+      if (t.id === "submit-expense-btn") { submitExpense(); return; }
+      if (t.id === "split-equal-btn") { setSplitType("equal"); return; }
+      if (t.id === "split-custom-btn") { setSplitType("custom"); return; }
+      if (t.id === "receipt-btn") {
+        var fileInput = document.getElementById("receipt-input");
+        if (fileInput) fileInput.click();
+        return;
+      }
+      if (t.id === "cancel-edit-btn") { cancelEditExpense(); return; }
+      if (t.id === "exclude-settlement-btn") { toggleExcludeFromSettlement(); return; }
+      if (t.id === "pool-split-apply-btn") { applyPoolSplitExpense(); return; }
+      var catChip = t.closest("[data-set-category]");
+      if (catChip) { setCategory(catChip.getAttribute("data-set-category")); return; }
+      var pchip = t.closest("[data-toggle-participant]");
+      if (pchip) { toggleParticipant(pchip.getAttribute("data-toggle-participant")); return; }
+    });
+    document.getElementById("expense-form-body").addEventListener("change", function (e) {
+      if (e.target.id === "payer-select") {
+        form.payerId = e.target.value;
+        if (form.excludeFromSettlement) form.participants = [form.payerId];
+        renderPoolCapacityArea();
+        return;
+      }
+      if (e.target.id === "currency-select") {
+        form.currency = e.target.value;
+        if (form.currency !== "KRW" && !fxRate(form.currency) && !fxPanelOpen) {
+          fxPanelOpen = true;
+          renderFx();
+        }
+        updateCurrencyPreview();
+        renderPoolCapacityArea();
+        if (form.splitType === "custom") renderCustomShares();
+        return;
+      }
+      if (e.target.id === "receipt-input") {
+        var file = e.target.files && e.target.files[0];
+        handleReceiptFile(file);
+        return;
+      }
+    });
+    document.getElementById("expense-form-body").addEventListener("input", function (e) {
+      var el = e.target;
+      if (el.hasAttribute("data-custom-share")) {
+        updateCustomShare(el.getAttribute("data-custom-share"), el.value);
+      } else if (el.id === "amount-input") {
+        updateCurrencyPreview();
+        renderPoolCapacityArea();
+        if (form.splitType === "custom") {
+          var label = document.getElementById("custom-total-label");
+          if (label) label.textContent = formatCurrency(customTotal(), form.currency) + " / " + formatCurrency(toNumber(el.value), form.currency);
+        }
+      }
+    });
+
+    document.getElementById("expense-list").addEventListener("click", function (e) {
+      var delBtn = e.target.closest("[data-del-expense]");
+      if (delBtn) { removeExpense(delBtn.getAttribute("data-del-expense")); return; }
+      var editBtn = e.target.closest("[data-edit-expense]");
+      if (editBtn) { startEditExpense(editBtn.getAttribute("data-edit-expense")); return; }
+      var upBtn = e.target.closest("[data-move-up]");
+      if (upBtn && !upBtn.disabled) { moveExpense(upBtn.getAttribute("data-move-up"), 1); return; }
+      var downBtn = e.target.closest("[data-move-down]");
+      if (downBtn && !downBtn.disabled) { moveExpense(downBtn.getAttribute("data-move-down"), -1); return; }
+    });
+
+    document.getElementById("settlement-body").addEventListener("click", function (e) {
+      var allBtn = e.target.closest("[data-settle-filter-all]");
+      if (allBtn) { setSettleFilterAll(); return; }
+      var chip = e.target.closest("[data-settle-filter]");
+      if (chip) { toggleSettleFilter(chip.getAttribute("data-settle-filter")); return; }
+      if (e.target.id === "pool-deficit-breakdown-btn") {
+        showPoolDeficitBreakdown = !showPoolDeficitBreakdown;
+        renderSettlement();
+        return;
+      }
+      if (e.target.id === "pool-deficit-apply-btn") {
+        applyPoolDeficitEqualSplit();
+        return;
+      }
+    });
+    document.getElementById("share-text-btn").addEventListener("click", copyShareText);
+    document.getElementById("print-view-btn").addEventListener("click", openPrintView);
+
+    document.getElementById("backup-toggle-btn").addEventListener("click", toggleBackup);
+    document.getElementById("backup-body").addEventListener("click", function (e) {
+      if (e.target.id === "backup-copy-btn") copyBackupText();
+      if (e.target.id === "restore-btn") restoreFromBackup();
+      if (e.target.id === "reset-all-btn") resetAllData();
+    });
+  }
+
+  // ---------- init ----------
+  loadState(function () {
+    handleIncomingCloudLink(function () {
+      syncFormWithMembers();
+      resetExpenseForm();
+      initEvents();
+      renderAll();
+    });
+  });
+})();
+</script>
+</body>
+</html>
