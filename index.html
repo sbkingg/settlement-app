@@ -261,6 +261,8 @@
     </div>
   </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 (function () {
   "use strict";
@@ -270,6 +272,180 @@
   var CATEGORIES = ["식비", "숙소", "교통", "쇼핑", "기타"];
   var DEFAULT_CATEGORY = CATEGORIES[0];
   var RECEIPT_FEATURE_ENABLED = false; // 영수증 사진 인식: 환경별 지원 여부 재확인 전까지 비활성화
+
+  // ---------- cloud sync (Firebase Firestore) ----------
+  // Lets two or more phones (예: 대장님 & 딸) share one trip in real time.
+  // A trip becomes "cloud" the moment someone taps "클라우드로 공유하기": its
+  // current local data is pushed to Firestore under the SAME id the trip
+  // already has locally, so the share link is simply "?trip=<tripId>".
+  // localStorage / window.storage stays the source of truth for the UI and
+  // for offline use; Firestore is a mirror + realtime relay on top of it.
+  var firebaseConfig = {
+    apiKey: "AIzaSyBgQOdcYS_eLUw5Vdv7Wb0VjiGcGYcPamU",
+    authDomain: "settlement-sbking.firebaseapp.com",
+    projectId: "settlement-sbking",
+    storageBucket: "settlement-sbking.firebasestorage.app",
+    messagingSenderId: "683591898848",
+    appId: "1:683591898848:web:db2f8e693c1d17e05f6285"
+  };
+  var cloudDb = null;
+  var cloudReady = false;
+  function cloudInit() {
+    if (cloudReady) return cloudDb;
+    cloudReady = true;
+    try {
+      if (typeof firebase === "undefined") return null;
+      firebase.initializeApp(firebaseConfig);
+      cloudDb = firebase.firestore();
+    } catch (e) {
+      cloudDb = null;
+    }
+    return cloudDb;
+  }
+  function cloudAvailable() { return !!cloudInit(); }
+  function cloudDocRef(tripId) {
+    var db = cloudInit();
+    return db ? db.collection("trips").doc(tripId) : null;
+  }
+  var cloudUnsubscribe = null;
+  var cloudApplyingRemote = false;
+  function detachCloudListener() {
+    if (cloudUnsubscribe) { try { cloudUnsubscribe(); } catch (e) {} cloudUnsubscribe = null; }
+  }
+  function attachCloudListener(tripId) {
+    detachCloudListener();
+    var ref = cloudDocRef(tripId);
+    if (!ref) return;
+    cloudUnsubscribe = ref.onSnapshot(function (doc) {
+      if (!doc.exists) return;
+      if (doc.metadata.hasPendingWrites) return; // our own optimistic write echoing back — ignore
+      if (tripId !== currentTripId) return; // stale listener from a previous trip
+      var payload = doc.data();
+      if (!payload || typeof payload.data !== "string") return;
+      var parsed;
+      try { parsed = JSON.parse(payload.data); } catch (e) { return; }
+      cloudApplyingRemote = true;
+      applyLoadedData(parsed);
+      storageSet(tripDataKey(tripId), payload.data);
+      var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+      if (entry) {
+        entry.expenseCount = state.expenses.length;
+        entry.updatedAt = Date.now();
+        saveTripsIndex();
+      }
+      syncFormWithMembers();
+      renderAll();
+      cloudApplyingRemote = false;
+      showToast("🔄 상대방이 입력한 내용으로 갱신됐어요.");
+    }, function () {
+      // permission or network error — silently keep working offline
+    });
+  }
+  function pushCloudUpdate(tripId) {
+    var ref = cloudDocRef(tripId);
+    if (!ref) return;
+    var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+    ref.set({
+      tripName: entry ? entry.name : "",
+      data: JSON.stringify(state),
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true }).catch(function () {});
+  }
+  function isCloudTrip(id) {
+    var entry = tripsIndex.filter(function (t) { return t.id === id; })[0];
+    return !!(entry && entry.cloud);
+  }
+  function getShareLink(tripId) {
+    return location.origin + location.pathname + "?trip=" + encodeURIComponent(tripId);
+  }
+  function enableCloudSync(tripId) {
+    if (!cloudAvailable()) {
+      showToast("⚠ 클라우드 연결에 실패했어요. 네트워크를 확인해 주세요.");
+      return;
+    }
+    var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+    if (!entry) return;
+    entry.cloud = true;
+    saveTripsIndex();
+    pushCloudUpdate(tripId); // migrate current local data up as the initial cloud copy — 지금까지의 기록이 그대로 히스토리가 됨
+    attachCloudListener(tripId);
+    renderTripPanel();
+    showCloudLinkModal(tripId);
+  }
+  function showCloudLinkModal(tripId) {
+    var link = getShareLink(tripId);
+    showConfirmModal(
+      "공유 링크가 준비됐어요:\n" + link + "\n\n이 링크를 카카오톡 등으로 상대방에게 보내주면, 상대방이 링크를 열 때 자동으로 같은 여행을 실시간으로 공유하게 돼요.\n\n지금 링크를 복사할까요?",
+      function () { copyCloudLink(tripId); },
+      function () {}
+    );
+  }
+  function copyCloudLink(tripId) {
+    var link = getShareLink(tripId);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(link).then(function () {
+        showToast("🔗 링크를 복사했어요.");
+      }).catch(function () { promptCopyFallback(link); });
+    } else {
+      promptCopyFallback(link);
+    }
+  }
+  function promptCopyFallback(link) {
+    window.prompt("아래 링크를 길게 눌러 복사해 주세요:", link);
+  }
+  // Called once at startup when the URL has ?trip=<id>. Handles two cases:
+  //  1) that trip already exists locally (same device reopening its own share link) -> just switch + listen
+  //  2) brand-new device (예: 딸의 폰) -> pull the cloud copy down, add it locally, switch + listen
+  function handleIncomingCloudLink(cb) {
+    var params = new URLSearchParams(location.search);
+    var tripId = params.get("trip");
+    if (!tripId) { cb(); return; }
+    if (!cloudAvailable()) { cb(); return; }
+    var existing = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+    if (existing) {
+      existing.cloud = true;
+      saveTripsIndex();
+      if (tripId !== currentTripId) {
+        currentTripId = tripId;
+        saveCurrentTripPointer();
+        clearInMemoryState();
+        storageGet(tripDataKey(tripId)).then(function (raw) {
+          if (raw) { try { applyLoadedData(JSON.parse(raw)); } catch (e) {} }
+          attachCloudListener(tripId);
+          cb();
+        });
+      } else {
+        attachCloudListener(tripId);
+        cb();
+      }
+      return;
+    }
+    // not present locally yet — pull it from the cloud
+    var ref = cloudDocRef(tripId);
+    if (!ref) { cb(); return; }
+    ref.get().then(function (doc) {
+      if (!doc.exists) { showToast("⚠ 공유 링크의 여행을 찾을 수 없어요."); cb(); return; }
+      var payload = doc.data();
+      var parsed = null;
+      try { parsed = JSON.parse(payload.data); } catch (e) {}
+      tripsIndex.push({
+        id: tripId, name: payload.tripName || "공유받은 여행", createdAt: Date.now(), updatedAt: Date.now(),
+        expenseCount: parsed && parsed.expenses ? parsed.expenses.length : 0, status: "ongoing", startDate: "", endDate: "", cloud: true
+      });
+      saveTripsIndex();
+      currentTripId = tripId;
+      saveCurrentTripPointer();
+      clearInMemoryState();
+      if (parsed) applyLoadedData(parsed);
+      storageSet(tripDataKey(tripId), payload.data);
+      attachCloudListener(tripId);
+      showToast("☁ 공유받은 여행을 불러왔어요: " + (payload.tripName || ""));
+      cb();
+    }).catch(function () {
+      showToast("⚠ 공유 링크를 여는 중 문제가 발생했어요. 네트워크를 확인해 주세요.");
+      cb();
+    });
+  }
 
   // ---------- currency / fx ----------
   var CURRENCIES = ["KRW", "IDR", "USD"];
@@ -624,6 +800,7 @@
       var payload = JSON.stringify(state);
       storageSet(tripDataKey(currentTripId), payload).then(function () { setSaveState("saved"); });
       touchCurrentTripIndex();
+      if (!cloudApplyingRemote && isCloudTrip(currentTripId)) pushCloudUpdate(currentTripId);
     }, 400);
   }
   function setSaveState(s) {
@@ -704,14 +881,12 @@
     var others = tripsIndex.filter(function (t) { return t.id !== currentTripId && t.status !== "done"; })
       .sort(function (a, b) { return (b.updatedAt || 0) - (a.updatedAt || 0); });
     if (!others.length) { el.style.display = "none"; el.innerHTML = ""; return; }
-    var first = others[0];
-    var extra = others.length > 1 ? (" 외 " + (others.length - 1) + "건") : "";
     el.style.display = "";
     el.innerHTML =
       '<div class="card" style="background:var(--brass-bg); border-color:var(--brass); display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:14px;">' +
-      '<div style="font-size:13px;">📌 진행 중인 다른 여행이 있어요: <b>' + esc(first.name) + '</b>' + extra + '</div>' +
+      '<div style="font-size:13px;">📌 진행 중인 다른 여행이 ' + others.length + '건 있어요</div>' +
       '<div style="display:flex; gap:6px; flex-shrink:0;">' +
-      '<button class="btn btn-dark" style="padding:6px 10px; font-size:12px; width:auto;" data-switch-trip="' + first.id + '">이어하기</button>' +
+      '<button class="btn btn-dark" style="padding:6px 10px; font-size:12px; width:auto;" id="startup-banner-switch-btn">여행 전환</button>' +
       '<button class="del-btn" id="startup-banner-dismiss">✕</button>' +
       '</div></div>';
   }
@@ -747,7 +922,7 @@
       var isCurrent = t.id === currentTripId;
       var done = t.status === "done";
       var dateLabel = tripDateLabel(t);
-      html += '<div class="card" style="margin-bottom:8px;' + (isCurrent ? " border-color:var(--brass);" : "") + '">';
+      html += '<div class="card" style="margin-bottom:8px;' + (isCurrent ? " border-color:var(--brass);" : " cursor:pointer;") + '"' + (isCurrent ? '' : ' data-card-trip="' + t.id + '"') + '>';
       html += '<div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">';
       html += '<div style="flex:1; min-width:0;">';
       if (isCurrent) {
@@ -757,8 +932,11 @@
       }
       html += '<div class="muted" style="font-size:11px;">' + (t.expenseCount || 0) + '건' + (dateLabel ? ' · ' + esc(dateLabel) : '') + '</div>';
       html += '</div>';
-      html += '<span class="badge" style="flex-shrink:0; background:' + (done ? "var(--stamp-soft)" : "var(--brass-bg)") + '; color:' + (done ? "var(--stamp)" : "var(--brass)") + ';">' + (isCurrent ? "★ 현재 · " : "") + (done ? "🔒 완료" : "진행중") + '</span>';
+      html += '<span class="badge" style="flex-shrink:0; background:' + (done ? "var(--stamp-soft)" : "var(--brass-bg)") + '; color:' + (done ? "var(--stamp)" : "var(--brass)") + ';">' + (done ? "🔒 완료" : "진행중") + '</span>';
       html += '</div>';
+      if (t.cloud) {
+        html += '<div class="muted" style="font-size:11px; margin-top:4px;">☁ 실시간 공유 중</div>';
+      }
 
       if (isCurrent) {
         html += '<div class="row" style="margin-top:8px;">';
@@ -769,6 +947,13 @@
         html += '<button class="btn btn-brass-soft" style="font-size:12px; padding:6px 10px;" id="trip-meta-save-btn">이름/날짜 저장</button>';
         html += '<button class="btn ' + (done ? "btn-dark" : "btn-stamp") + '" style="font-size:12px; padding:6px 10px; width:auto;" data-toggle-trip-status="' + t.id + '">' + (done ? "🔓 진행중으로 전환" : "✓ 정산 완료로 표시") + '</button>';
         html += '<button class="del-btn" style="font-size:12px;" data-delete-trip="' + t.id + '">✕ 삭제</button>';
+        html += '</div>';
+        html += '<div style="margin-top:6px;">';
+        if (t.cloud) {
+          html += '<button class="btn btn-toggle" style="font-size:12px; padding:6px 10px; width:auto;" data-cloud-copy="' + t.id + '">🔗 공유 링크 복사</button>';
+        } else {
+          html += '<button class="btn btn-toggle" style="font-size:12px; padding:6px 10px; width:auto;" data-cloud-share="' + t.id + '">☁ 클라우드로 공유하기 (실시간 동기화)</button>';
+        }
         html += '</div>';
       } else {
         html += '<div style="display:flex; gap:6px; margin-top:8px;">';
@@ -792,6 +977,7 @@
   }
   function switchTrip(id) {
     if (id === currentTripId) return;
+    detachCloudListener();
     currentTripId = id;
     saveCurrentTripPointer();
     storageGet(tripDataKey(id)).then(function (raw) {
@@ -801,6 +987,7 @@
       resetExpenseForm();
       tripPanelOpen = false;
       renderTripPanel();
+      if (isCloudTrip(id)) attachCloudListener(id);
       renderAll();
       showToast("전환됐어요: " + ((currentTripEntry() || {}).name || ""));
     });
@@ -865,6 +1052,7 @@
       saveTripsIndex();
       storageDelete(tripDataKey(id));
       if (id === currentTripId) {
+        detachCloudListener();
         if (tripsIndex.length > 0) {
           switchTrip(tripsIndex[0].id);
         } else {
@@ -2226,6 +2414,10 @@
     }
   }
 
+  function cloudWarningLine(id) {
+    return isCloudTrip(id) ? "\n\n⚠ 이 여행은 지금 실시간 공유 중이에요. 여기서 되돌리면 상대방 화면의 데이터도 함께 바뀌어요." : "";
+  }
+
   function restoreFromBackup() {
     if (guardLocked()) return;
     var area = document.getElementById("restore-json-area");
@@ -2236,29 +2428,37 @@
       if (hint) { hint.textContent = "붙여넣은 텍스트가 없어요."; hint.style.color = "var(--stamp)"; }
       return;
     }
+    var data;
     try {
-      var data = JSON.parse(raw);
-      state.members = Array.isArray(data.members) ? data.members : [];
-      state.expenses = Array.isArray(data.expenses) ? data.expenses : [];
-      state.poolEnabled = !!data.poolEnabled;
-      state.contributions = (data.contributions && typeof data.contributions === "object") ? data.contributions : {};
-      state.fxRates = (data.fxRates && typeof data.fxRates === "object") ? data.fxRates : {};
-      state.fxUpdatedAt = data.fxUpdatedAt || null;
-      prevMemberIds = [];
-      syncFormWithMembers();
-      resetExpenseForm();
-      renderAll();
-      scheduleSave();
-      if (hint) { hint.textContent = "복원됐어요."; hint.style.color = "var(--brass)"; }
+      data = JSON.parse(raw);
     } catch (e) {
       if (hint) { hint.textContent = "텍스트 형식이 올바르지 않아요."; hint.style.color = "var(--stamp)"; }
+      return;
     }
+    var tripName = (currentTripEntry() || {}).name || "이 여행";
+    showConfirmModal(
+      '"' + tripName + '"의 현재 데이터를 붙여넣은 백업 내용으로 덮어쓸까요? 지금 화면의 내용은 사라져요.' + cloudWarningLine(currentTripId),
+      function () {
+        state.members = Array.isArray(data.members) ? data.members : [];
+        state.expenses = Array.isArray(data.expenses) ? data.expenses : [];
+        state.poolEnabled = !!data.poolEnabled;
+        state.contributions = (data.contributions && typeof data.contributions === "object") ? data.contributions : {};
+        state.fxRates = (data.fxRates && typeof data.fxRates === "object") ? data.fxRates : {};
+        state.fxUpdatedAt = data.fxUpdatedAt || null;
+        prevMemberIds = [];
+        syncFormWithMembers();
+        resetExpenseForm();
+        renderAll();
+        scheduleSave();
+        if (hint) { hint.textContent = "복원됐어요."; hint.style.color = "var(--brass)"; }
+      }
+    );
   }
 
   function resetAllData() {
     if (guardLocked()) return;
     var tripName = (currentTripEntry() || {}).name || "이 여행";
-    showConfirmModal('"' + tripName + '"의 모든 데이터(참여자·지출·회비·환율)를 지울까요? 다른 여행에는 영향 없어요. 이 작업은 되돌릴 수 없어요.', function () {
+    showConfirmModal('"' + tripName + '"의 모든 데이터(참여자·지출·회비·환율)를 지울까요? 다른 여행에는 영향 없어요. 이 작업은 되돌릴 수 없어요.' + cloudWarningLine(currentTripId), function () {
       clearInMemoryState();
       syncFormWithMembers();
       resetExpenseForm();
@@ -2286,13 +2486,25 @@
       if (statusBtn) { toggleTripStatus(statusBtn.getAttribute("data-toggle-trip-status")); return; }
       var delBtn = e.target.closest("[data-delete-trip]");
       if (delBtn) { deleteTrip(delBtn.getAttribute("data-delete-trip")); return; }
+      var cloudShareBtn = e.target.closest("[data-cloud-share]");
+      if (cloudShareBtn) { enableCloudSync(cloudShareBtn.getAttribute("data-cloud-share")); return; }
+      var cloudCopyBtn = e.target.closest("[data-cloud-copy]");
+      if (cloudCopyBtn) { copyCloudLink(cloudCopyBtn.getAttribute("data-cloud-copy")); return; }
+      // fallback: clicking anywhere else on a non-current trip card (not one of the buttons above) also switches to it
+      var cardEl = e.target.closest("[data-card-trip]");
+      if (cardEl) { switchTrip(cardEl.getAttribute("data-card-trip")); return; }
     });
     var banner = document.getElementById("startup-banner");
     if (banner) {
       banner.addEventListener("click", function (e) {
         if (e.target.id === "startup-banner-dismiss") { startupBannerDismissed = true; renderStartupBanner(); return; }
-        var switchBtn = e.target.closest("[data-switch-trip]");
-        if (switchBtn) { switchTrip(switchBtn.getAttribute("data-switch-trip")); return; }
+        if (e.target.id === "startup-banner-switch-btn") {
+          tripPanelOpen = true;
+          renderTripPanel();
+          var panelEl = document.getElementById("trip-panel-body");
+          if (panelEl) panelEl.scrollIntoView({ behavior: "smooth", block: "start" });
+          return;
+        }
       });
     }
     document.getElementById("undo-bar").addEventListener("click", function (e) {
@@ -2485,10 +2697,12 @@
 
   // ---------- init ----------
   loadState(function () {
-    syncFormWithMembers();
-    resetExpenseForm();
-    initEvents();
-    renderAll();
+    handleIncomingCloudLink(function () {
+      syncFormWithMembers();
+      resetExpenseForm();
+      initEvents();
+      renderAll();
+    });
   });
 })();
 </script>
