@@ -1826,14 +1826,50 @@
       return selectedIds.indexOf(m.id) !== -1 && Math.round(balance[m.id] || 0) !== 0;
     });
     if (balanceList.length > 0) {
+      // per-member breakdown: how much each person paid vs. how much they owe (their share),
+      // purely for display -- balance[] above already holds the paid-minus-share net figure.
+      var paidMap = {}, shareMap = {};
+      participantIds.forEach(function (id) { paidMap[id] = 0; shareMap[id] = 0; });
+      expensesForCalc.forEach(function (exp) {
+        var cur = exp.currency || "KRW";
+        if (paidMap[exp.payerId] !== undefined) paidMap[exp.payerId] += toKRW(exp.amount, cur);
+        exp.shares.forEach(function (s) {
+          if (shareMap[s.memberId] !== undefined) shareMap[s.memberId] += toKRW(s.amount, cur);
+        });
+      });
+
       html += '<div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--line);">';
-      html += '<div class="muted" style="font-size:12px; margin-bottom:8px;">개인별 잔액 (+받을 돈 / −보낼 돈)' + (filterActive ? ' · 전체 기준' : '') + '</div>';
+      html += '<div class="muted" style="font-size:12px; margin-bottom:10px;">개인별 정산 내역' + (filterActive ? ' · 전체 기준' : '') + '</div>';
+      html += '<div class="space-y">';
       balanceList.forEach(function (m) {
         var b = Math.round(balance[m.id] || 0);
+        var paid = Math.round(paidMap[m.id] || 0);
+        var share = Math.round(shareMap[m.id] || 0);
         var color = b > 0 ? "var(--brass)" : "var(--stamp)";
-        html += '<div class="card-row" style="margin-bottom:4px;"><span>' + esc(m.name) + '</span>' +
-          '<span class="mono" style="color:' + color + ';">' + (b > 0 ? "+" : "") + formatWon(b) + '</span></div>';
+        var poolContrib = Math.round(toNumber(state.contributions[m.id]));
+        var personalSpent = Math.round(state.expenses
+          .filter(function (e) { return e.payerId === m.id && e.excludeFromSettlement; })
+          .reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0));
+
+        html += '<div class="card">';
+        html += '<div style="font-weight:600; font-size:14px; margin-bottom:8px;">' + esc(m.name) + '</div>';
+        html += '<div class="card-row" style="margin-bottom:4px;"><span class="muted">낸 돈 (내가 결제한 공동 지출)</span><span class="mono">' + formatWon(paid) + '</span></div>';
+        html += '<div class="card-row" style="margin-bottom:6px;"><span class="muted">쓴 돈 (내가 나눠 가진 몫)</span><span class="mono">− ' + formatWon(share) + '</span></div>';
+        html += '<div class="card-row" style="padding-top:6px; border-top:1px dashed var(--line); font-weight:700;"><span>잔액 (' + (b > 0 ? "받을 돈" : "보낼 돈") + ')</span><span class="mono" style="color:' + color + ';">' + (b > 0 ? "+" : "") + formatWon(b) + '</span></div>';
+        if (poolContrib > 0 || personalSpent > 0) {
+          html += '<div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--line);">';
+          html += '<div class="muted" style="font-size:11px; margin-bottom:4px;">ℹ️ 참고 · 정산 계산엔 안 들어가요</div>';
+          if (poolContrib > 0) {
+            html += '<div class="card-row" style="font-size:12px; margin-bottom:2px;"><span class="muted">회비 납부</span><span class="mono">' + formatWon(poolContrib) + '</span></div>';
+          }
+          if (personalSpent > 0) {
+            html += '<div class="card-row" style="font-size:12px;"><span class="muted">개인 지출 (쏜 금액)</span><span class="mono">' + formatWon(personalSpent) + '</span></div>';
+          }
+          html += '</div>';
+        }
+        html += '</div>';
       });
+      html += '</div>';
       html += '</div>';
     }
     body.innerHTML = html;
