@@ -270,6 +270,31 @@
   var POOL_ID = "__POOL__";
   var POOL_NAME = "회비(공동경비)";
   var CATEGORIES = ["식비", "숙소", "교통", "쇼핑", "기타"];
+  // 항목명에 이런 단어가 들어있으면 해당 카테고리일 확률이 높다고 보고 힌트를 띄운다 (강제 아님, 참고용).
+  var CATEGORY_KEYWORDS = {
+    "식비": ["식사", "밥", "점심", "저녁", "아침", "조식", "브런치", "카페", "커피", "디저트", "간식", "술", "맥주", "와인", "레스토랑", "식당", "뷔페"],
+    "교통": ["택시", "버스", "지하철", "기차", "전철", "항공", "비행기", "공항", "렌트카", "렌터카", "주유", "톨게이트", "그랩", "우버", "배", "선박", "페리"],
+    "숙소": ["숙소", "호텔", "모텔", "에어비앤비", "게스트하우스", "리조트", "체크인", "숙박"],
+    "쇼핑": ["쇼핑", "선물", "기념품", "구매", "면세", "옷", "가방", "악세서리", "기념", "마트"]
+  };
+  // desc(항목명)로 카테고리를 추정한다. 매칭 키워드가 없으면 null.
+  function suggestCategoryForDesc(desc) {
+    if (!desc) return null;
+    var found = CATEGORIES.filter(function (cat) {
+      var kws = CATEGORY_KEYWORDS[cat];
+      return kws && kws.some(function (kw) { return desc.indexOf(kw) !== -1; });
+    });
+    // 서로 다른 카테고리 키워드가 동시에 걸리면(예: "공항에서 저녁식사") 애매하니 힌트를 띄우지 않는다.
+    return found.length === 1 ? found[0] : null;
+  }
+  // 항목명과 선택된 카테고리가 안 맞아 보이면 비강제 힌트를 보여준다 (탭 한 번으로 바로 적용 가능).
+  function buildCategoryHintHtml(desc, category) {
+    var suggested = suggestCategoryForDesc(desc);
+    if (!suggested || suggested === category) return "";
+    return '<p class="copy-hint" style="color:var(--brass); margin-top:6px;">💡 항목명을 보면 "' + esc(suggested) +
+      '"이(가) 더 어울려요. <button type="button" data-apply-category="' + esc(suggested) +
+      '" style="border:none; background:none; color:var(--brass); text-decoration:underline; font-size:inherit; padding:0; cursor:pointer;">적용</button></p>';
+  }
   var DEFAULT_CATEGORY = CATEGORIES[0];
   var RECEIPT_FEATURE_ENABLED = false; // 영수증 사진 인식: 환경별 지원 여부 재확인 전까지 비활성화
 
@@ -462,7 +487,10 @@
     poolEnabled: false,
     contributions: {},
     fxRates: {},       // { USD: "1380", IDR: "0.089" } -- KRW per 1 unit of that currency (string, like contributions)
-    fxUpdatedAt: null  // ms timestamp of last auto-fetch
+    fxUpdatedAt: null, // ms timestamp of last auto-fetch
+    poolManagementType: "individual", // "individual" | "account"
+    poolManagerId: "",
+    poolSurplusPolicy: "keep" // "keep" | "refund" | "carryover"
   };
 
   var form = {
@@ -784,6 +812,9 @@
     state.contributions = {};
     state.fxRates = {};
     state.fxUpdatedAt = null;
+    state.poolManagementType = "individual";
+    state.poolManagerId = "";
+    state.poolSurplusPolicy = "keep";
     prevMemberIds = [];
     editingExpenseId = null;
     retroPrompt = null;
@@ -809,12 +840,35 @@
   }
   function applyLoadedData(data) {
     if (!data || typeof data !== "object") return;
-    state.members = data.members || [];
-    state.expenses = data.expenses || [];
+    state.members = Array.isArray(data.members) ? data.members : [];
+    state.expenses = Array.isArray(data.expenses) ? data.expenses : [];
     state.poolEnabled = !!data.poolEnabled;
-    state.contributions = data.contributions || {};
+    state.contributions = (data.contributions && typeof data.contributions === "object") ? data.contributions : {};
     state.fxRates = (data.fxRates && typeof data.fxRates === "object") ? data.fxRates : {};
     state.fxUpdatedAt = data.fxUpdatedAt || null;
+    // 회비 관리 방식: "individual"(총무 1인이 현금/계좌로 직접 보관) | "account"(참여자 공동 명의 계좌 등으로 별도 관리)
+    state.poolManagementType = (data.poolManagementType === "account") ? "account" : "individual";
+    state.poolManagerId = data.poolManagerId || (state.members[0] && state.members[0].id) || "";
+    // 잔액 처리 방침: "keep"(그대로 보관) | "refund"(낸 비율대로 환급) | "carryover"(다음 여행으로 이월)
+    state.poolSurplusPolicy = data.poolSurplusPolicy || "keep";
+    migrateLegacyPoolId();
+  }
+
+  // 2026-08 마이그레이션: 예전 버전에서 회비 결제자 ID가 "POOL" 문자열로 저장된 적이 있음.
+  // 현재 코드의 POOL_ID("__POOL__")와 값이 달라서 회비 관련 계산(회비로 쓴 지출, 정산 제외 처리 등)이
+  // 전부 누락되는 버그가 있었음. 불러온 데이터에서 옛날 값을 발견하면 자동으로 고쳐서 저장한다.
+  function migrateLegacyPoolId() {
+    var LEGACY_POOL_IDS = ["POOL"]; // 필요 시 다른 예전 값이 발견되면 여기에 추가
+    var changed = false;
+    state.expenses.forEach(function (e) {
+      if (LEGACY_POOL_IDS.indexOf(e.payerId) !== -1) {
+        e.payerId = POOL_ID;
+        changed = true;
+      }
+    });
+    if (changed) {
+      scheduleSave();
+    }
   }
 
   function loadState(cb) {
@@ -1092,10 +1146,11 @@
   function resetExpenseForm() {
     document.getElementById("desc-input") && (document.getElementById("desc-input").value = "");
     document.getElementById("amount-input") && (document.getElementById("amount-input").value = "");
+    var activeMembers = state.members.filter(function (m) { return m.active !== false; });
     form.splitType = "equal";
-    form.participants = state.members.map(function (m) { return m.id; });
+    form.participants = activeMembers.map(function (m) { return m.id; });
     form.customShares = {};
-    form.payerId = state.members[0] ? state.members[0].id : "";
+    form.payerId = activeMembers[0] ? activeMembers[0].id : "";
     form.category = DEFAULT_CATEGORY;
     form.currency = "KRW";
     form.excludeFromSettlement = false;
@@ -1146,18 +1201,30 @@
     if (nameInput) nameInput.disabled = locked;
     if (addBtn) addBtn.disabled = locked;
     var box = document.getElementById("member-chips");
+    var activeMembers = state.members.filter(function (m) { return m.active !== false; });
+    var inactiveMembers = state.members.filter(function (m) { return m.active === false; });
     if (state.members.length === 0) {
       box.innerHTML = '<span class="muted" style="font-size:14px;">아직 참여자가 없어요. 이름을 추가해 주세요.</span>';
     } else {
-      box.innerHTML = state.members.map(function (m) {
+      var html = activeMembers.map(function (m) {
         return '<span class="chip member-chip">' + esc(m.name) +
           (locked ? '' : '<button class="x-btn" data-remove-member="' + m.id + '">✕</button>') + '</span>';
       }).join("");
+      if (inactiveMembers.length > 0) {
+        html += '<div style="width:100%; margin-top:8px;">';
+        html += '<div class="muted" style="font-size:11px; margin-bottom:4px;">🔒 비활성 참여자 (지출 이력은 그대로 남아있어요)</div>';
+        html += inactiveMembers.map(function (m) {
+          return '<span class="chip member-chip" style="opacity:0.55;">' + esc(m.name) +
+            (locked ? '' : '<button class="x-btn" data-reactivate-member="' + m.id + '" title="다시 활성화">↺</button>') + '</span>';
+        }).join("");
+        html += '</div>';
+      }
+      box.innerHTML = html;
     }
     var printBox = document.getElementById("print-member-list");
     if (printBox) {
       printBox.textContent = state.members.length
-        ? state.members.map(function (m) { return m.name; }).join(", ")
+        ? state.members.map(function (m) { return m.name + (m.active === false ? " (비활성)" : ""); }).join(", ")
         : "참여자 없음";
     }
     renderRetroPrompt();
@@ -1326,6 +1393,54 @@
     if (!balanceOk) {
       html += '<p class="copy-hint" style="color:var(--stamp);">회비보다 지출이 더 많아요. 회비를 더 걷거나, 회비로 처리할 지출을 줄여주세요.</p>';
     }
+
+    // ── 회비 관리 방식 (총무 1인 관리 vs 공동 계좌 관리) ──
+    html += '<div class="no-print" style="margin-top:14px; padding-top:12px; border-top:1px solid var(--line);">';
+    html += '<div class="muted" style="font-size:12px; margin-bottom:6px;">회비 관리 방식</div>';
+    html += '<div class="chip-row" id="pool-mgmt-type-chips" style="margin-bottom:0;">';
+    html += '<button type="button" class="chip' + (state.poolManagementType === "individual" ? " active brass" : "") + '" data-pool-mgmt="individual"' + (locked ? " disabled" : "") + '>👤 총무 1인 관리</button>';
+    html += '<button type="button" class="chip' + (state.poolManagementType === "account" ? " active brass" : "") + '" data-pool-mgmt="account"' + (locked ? " disabled" : "") + '>🏦 공동 계좌 관리</button>';
+    html += '</div>';
+    if (state.poolManagementType === "individual") {
+      html += '<div class="row" style="margin-top:8px;">';
+      html += '<select id="pool-manager-select"' + (locked ? " disabled" : "") + '>';
+      html += state.members.map(function (m) {
+        return '<option value="' + m.id + '"' + (state.poolManagerId === m.id ? " selected" : "") + '>' + esc(m.name) + ' — 회비 보관/관리</option>';
+      }).join("");
+      html += '</select></div>';
+      html += '<p class="copy-hint" style="margin-top:4px;">' + esc(memberName(state.poolManagerId) || "총무") + '님이 현금(또는 개인 계좌)으로 회비를 직접 들고 관리해요.</p>';
+    } else {
+      html += '<p class="copy-hint" style="margin-top:6px;">참여자 공동 명의 계좌나 모임통장에서 회비를 관리해요. (특정 개인이 현금을 들고 다니지 않음)</p>';
+    }
+    html += '</div>';
+
+    // ── 잔액 처리 방침 (잔액이 남았을 때만 노출) ──
+    if (balanceOk && poolBalance > 0 && contribTotal > 0) {
+      html += '<div class="card" style="margin-top:10px; border-color:var(--brass-bg);">';
+      html += '<div class="muted" style="font-size:12px; margin-bottom:8px;">남은 회비 ' + formatWon(poolBalance) + ', 어떻게 할까요?</div>';
+      html += '<div class="chip-row" id="pool-surplus-policy-chips" style="margin-bottom:0;">';
+      html += '<button type="button" class="chip' + (state.poolSurplusPolicy === "refund" ? " active brass" : "") + '" data-pool-surplus="refund"' + (locked ? " disabled" : "") + '>💸 낸 비율대로 환급</button>';
+      html += '<button type="button" class="chip' + (state.poolSurplusPolicy === "carryover" ? " active brass" : "") + '" data-pool-surplus="carryover"' + (locked ? " disabled" : "") + '>➡️ 다음 여행 이월</button>';
+      html += '<button type="button" class="chip' + (state.poolSurplusPolicy === "keep" ? " active brass" : "") + '" data-pool-surplus="keep"' + (locked ? " disabled" : "") + '>📦 그대로 보관</button>';
+      html += '</div>';
+      if (state.poolSurplusPolicy === "refund") {
+        html += '<div style="margin-top:10px;">';
+        state.members.forEach(function (m) {
+          var contrib = toNumber(state.contributions[m.id]);
+          var refund = contribTotal > 0 ? Math.round(poolBalance * (contrib / contribTotal)) : 0;
+          html += '<div class="card-row" style="font-size:13px; margin-bottom:2px;"><span>' + esc(m.name) + ' 환급액</span><span class="mono" style="color:var(--brass);">' + formatWon(refund) + '</span></div>';
+        });
+        html += '</div>';
+        html += '<p class="copy-hint" style="margin-top:8px;">※ 낸 회비 비율대로 계산했어요. ' + esc(memberName(state.poolManagerId) || "회비 관리자") +
+          '가 각자에게 위 금액을 돌려주면 돼요. (위 "송금 안내"의 개인 정산 금액과는 별개예요)</p>';
+      } else if (state.poolSurplusPolicy === "carryover") {
+        html += '<p class="copy-hint" style="margin-top:8px;">다음 여행을 새로 시작할 때, 이 잔액(' + formatWon(poolBalance) + ')을 참고해서 회비를 다시 걷을 때 반영해 주세요. (자동 이월은 아직 지원하지 않아요 — 수동으로 다음 여행의 걷은 회비에 더해주시면 돼요)</p>';
+      } else {
+        html += '<p class="copy-hint" style="margin-top:8px;">' + esc(memberName(state.poolManagerId) || "총무") + '가 그대로 보관해요. 나중에 쓸 곳이 생기면 "지출 추가"에서 회비로 결제 등록하면 돼요.</p>';
+      }
+      html += '</div>';
+    }
+
     body.innerHTML = html;
   }
 
@@ -1348,8 +1463,14 @@
     var focusedId = document.activeElement ? document.activeElement.id : null;
     formPrefill = null;
 
-    var payerOptions = state.members.map(function (m) {
-      return '<option value="' + m.id + '"' + (form.payerId === m.id ? " selected" : "") + '>' + esc(m.name) + ' 결제</option>';
+    // 새 지출 입력 시엔 비활성 참여자를 선택지에서 뺀다. 다만 수정 중인 지출이 이미 비활성 참여자를
+    // 결제자/분배대상으로 포함하고 있다면(과거 데이터), 그 사람만은 계속 보여줘서 수정 화면이 깨지지 않게 한다.
+    var selectableMembers = state.members.filter(function (m) {
+      return m.active !== false || m.id === form.payerId || form.participants.indexOf(m.id) !== -1;
+    });
+
+    var payerOptions = selectableMembers.map(function (m) {
+      return '<option value="' + m.id + '"' + (form.payerId === m.id ? " selected" : "") + '>' + esc(m.name) + (m.active === false ? " (비활성)" : "") + ' 결제</option>';
     }).join("");
     if (state.poolEnabled) {
       var poolRemainingForLabel = poolRemainingKRW(editingExpenseId);
@@ -1357,9 +1478,9 @@
       payerOptions += '<option value="' + POOL_ID + '"' + (form.payerId === POOL_ID ? " selected" : "") + '>' + esc(poolLabel) + '</option>';
     }
 
-    var participantChips = state.members.map(function (m) {
-      var active = form.participants.indexOf(m.id) !== -1;
-      return '<button type="button" class="chip' + (active ? " active" : "") + '" data-toggle-participant="' + m.id + '">' + esc(m.name) + '</button>';
+    var participantChips = selectableMembers.map(function (m) {
+      var isActive = form.participants.indexOf(m.id) !== -1;
+      return '<button type="button" class="chip' + (isActive ? " active" : "") + '" data-toggle-participant="' + m.id + '">' + esc(m.name) + (m.active === false ? " 🔒" : "") + '</button>';
     }).join("");
 
     var html = '';
@@ -1400,7 +1521,7 @@
     html += '<div><div class="muted" style="font-size:12px; margin-bottom:6px;">카테고리</div><div class="chip-row" id="category-chips" style="margin-bottom:0;">' +
       CATEGORIES.map(function (c) {
         return '<button type="button" class="chip' + (form.category === c ? " active" : "") + '" data-set-category="' + esc(c) + '">' + esc(c) + '</button>';
-      }).join("") + '</div></div>';
+      }).join("") + '</div><div id="category-hint">' + buildCategoryHintHtml(keepDesc, form.category) + '</div></div>';
     html += '<div id="custom-shares-body"></div>';
     html += '<button type="button" class="btn btn-stamp" id="submit-expense-btn">' + (editingExpenseId ? "변경사항 저장" : "+ 지출 추가") + '</button>';
     if (editingExpenseId) {
@@ -1629,6 +1750,7 @@
 
   var settleFilter = null; // null = everyone; otherwise array of selected ids
   var showPoolDeficitBreakdown = false; // opt-in view only -- never auto-applied to the actual settlement math
+  var showTotalBreakdown = false; // "여행 총 경비" 구성 보기 토글 (표시용, 계산에는 영향 없음)
 
   function settleFilterAllIds() {
     return state.members.map(function (m) { return m.id; });
@@ -1709,6 +1831,12 @@
     var balance = result.balance;
 
     var grandTotal = state.expenses.reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+    // "여행 총 경비" 구성 breakdown: 정산대상 공동지출 / 회비로 처리한 지출 / 개인지출(정산제외)
+    var settleTargetTotal = expensesForCalc.reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+    var poolPaidTotal = state.expenses.filter(function (e) { return e.payerId === POOL_ID; })
+      .reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
+    var personalExcludedTotal = state.expenses.filter(function (e) { return e.excludeFromSettlement; })
+      .reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
 
     var allIds = settleFilterAllIds();
     var filterActive = settleFilter !== null;
@@ -1743,7 +1871,16 @@
       ? (filterActive ? "선택한 인원끼리는 정산할 내역이 없어요" : "")
       : transfers.length + "건의 송금으로 정산이 끝나요";
 
-    var html = '<div class="card-row" style="margin-bottom:14px; font-size:14px;"><span class="muted">여행 총 경비</span><span class="mono" style="font-weight:700;">' + formatWon(grandTotal) + '</span></div>';
+    var html = '<div class="card-row" style="margin-bottom:4px; font-size:14px;"><span class="muted">여행 총 경비</span><span class="mono" style="font-weight:700;">' + formatWon(grandTotal) + '</span></div>';
+    html += '<button type="button" class="btn-toggle no-print' + (showTotalBreakdown ? " on" : "") + '" id="total-breakdown-toggle-btn" style="width:auto; padding:4px 10px; font-size:11px; margin-bottom:10px;">' +
+      (showTotalBreakdown ? "구성 숨기기 ▲" : "구성 보기 ▼") + '</button>';
+    if (showTotalBreakdown) {
+      html += '<div class="card" style="margin-bottom:14px;">';
+      html += '<div class="card-row" style="font-size:13px; margin-bottom:4px;"><span class="muted">ㄴ 정산 대상 공동지출</span><span class="mono">' + formatWon(settleTargetTotal) + '</span></div>';
+      html += '<div class="card-row" style="font-size:13px; margin-bottom:4px;"><span class="muted">ㄴ 회비로 처리한 지출</span><span class="mono">' + formatWon(poolPaidTotal) + '</span></div>';
+      html += '<div class="card-row" style="font-size:13px;"><span class="muted">ㄴ 개인 지출 (정산 제외)</span><span class="mono">' + formatWon(personalExcludedTotal) + '</span></div>';
+      html += '</div>';
+    }
 
     if (state.poolEnabled) {
       var contribTotal = state.members.reduce(function (s, m) { return s + toNumber(state.contributions[m.id]); }, 0);
@@ -1915,6 +2052,20 @@
       });
       if (poolLeft < 0) {
         lines.push("  ※ 이 부족분은 아래 개인 정산 금액에는 포함되지 않았어요. 회비를 추가로 걷어야 해요.");
+      } else if (poolLeft > 0) {
+        lines.push("  ㄴ 회비 관리: " + (state.poolManagementType === "account" ? "공동 계좌 관리" : (memberName(state.poolManagerId) || "총무") + " 보관"));
+        if (state.poolSurplusPolicy === "refund" && contribTotal > 0) {
+          lines.push("  ㄴ 잔액 처리: 낸 비율대로 환급");
+          contribRows.forEach(function (m) {
+            var contrib = toNumber(state.contributions[m.id]);
+            var refund = Math.round(poolLeft * (contrib / contribTotal));
+            lines.push("     - " + m.name + " 환급액: " + formatWon(refund));
+          });
+        } else if (state.poolSurplusPolicy === "carryover") {
+          lines.push("  ㄴ 잔액 처리: 다음 여행으로 이월 예정");
+        } else {
+          lines.push("  ㄴ 잔액 처리: 그대로 보관");
+        }
       }
       lines.push("");
     }
@@ -2035,12 +2186,63 @@
     renderRetroPrompt();
   }
 
+  function memberBalance(id) {
+    var participantIds = state.members.map(function (m) { return m.id; });
+    var expensesForCalc = state.expenses.filter(function (e) { return !isExpenseExcluded(e); });
+    var result = computeSettlement(participantIds, expensesForCalc);
+    return Math.round(result.balance[id] || 0);
+  }
+
   function removeMember(id) {
     if (guardLocked()) return;
     var member = state.members.filter(function (m) { return m.id === id; })[0];
     if (!member) return;
     var relatedExpenses = state.expenses.filter(function (e) { return e.payerId === id; });
+    var involvedInOthers = state.expenses.some(function (e) {
+      return e.payerId !== id && e.shares.some(function (s) { return s.memberId === id; });
+    });
+    var hasContribution = toNumber(state.contributions[id]) > 0;
+    var hasHistory = relatedExpenses.length > 0 || involvedInOthers || hasContribution;
 
+    if (!hasHistory) {
+      // 지출/회비 이력이 전혀 없으면 보존할 게 없으니 그냥 완전 삭제 (기존 방식)
+      doHardRemoveMember(id, member, relatedExpenses);
+      return;
+    }
+
+    // 스플릿와이즈 방식: 이력이 있는 사람은 완전 삭제 대신 "비활성화"로 처리해 정산 기록을 보존한다.
+    var bal = memberBalance(id);
+    var balLine = bal !== 0
+      ? ("\n\n⚠ 정산 잔액이 " + (bal > 0 ? "+" : "") + formatWon(bal) + " 남아있어요. 비활성화해도 이 잔액은 정산 결과에 계속 반영돼요.")
+      : "";
+    showConfirmModal(
+      '"' + member.name + '"을(를) 비활성화할까요? 지금까지의 지출·회비 내역과 정산 금액은 그대로 유지되고, 앞으로 새 지출에서는 선택할 수 없게 돼요. (나중에 다시 활성화할 수 있어요)' + balLine,
+      function () { deactivateMember(id); }
+    );
+  }
+
+  function deactivateMember(id) {
+    var m = state.members.filter(function (x) { return x.id === id; })[0];
+    if (!m) return;
+    m.active = false;
+    if (form.payerId === id) form.payerId = "";
+    form.participants = form.participants.filter(function (p) { return p !== id; });
+    renderAll();
+    scheduleSave();
+    showToast('"' + m.name + '"을(를) 비활성화했어요. 지출 내역은 그대로 남아있어요.');
+  }
+
+  function reactivateMember(id) {
+    if (guardLocked()) return;
+    var m = state.members.filter(function (x) { return x.id === id; })[0];
+    if (!m) return;
+    m.active = true;
+    renderAll();
+    scheduleSave();
+    showToast('"' + m.name + '"을(를) 다시 활성화했어요.');
+  }
+
+  function doHardRemoveMember(id, member, relatedExpenses) {
     function doRemove() {
       var snapshot = {
         kind: "member",
@@ -2058,15 +2260,10 @@
       scheduleSave();
       pushUndo(snapshot);
     }
-
-    if (relatedExpenses.length > 0) {
-      showConfirmModal(
-        '"' + member.name + '"을(를) 삭제하면 결제한 지출 ' + relatedExpenses.length + '건도 함께 삭제돼요.\n계속할까요? (삭제 후 8초 안에는 "실행취소"로 되돌릴 수 있어요)',
-        doRemove
-      );
-    } else {
-      doRemove();
-    }
+    showConfirmModal(
+      '"' + member.name + '"을(를) 삭제할까요? 지출·회비 이력이 없어서 완전히 지워져요. (삭제 후 10초 안에는 "실행취소"로 되돌릴 수 있어요)',
+      doRemove
+    );
   }
 
   function togglePool() {
@@ -2075,6 +2272,23 @@
     renderPool();
     renderExpenseForm();
     renderSettlement();
+    scheduleSave();
+  }
+
+  function setPoolManagementType(type) {
+    if (guardLocked()) return;
+    state.poolManagementType = type === "account" ? "account" : "individual";
+    if (state.poolManagementType === "individual" && !state.poolManagerId && state.members[0]) {
+      state.poolManagerId = state.members[0].id;
+    }
+    renderPool();
+    scheduleSave();
+  }
+
+  function setPoolSurplusPolicy(policy) {
+    if (guardLocked()) return;
+    state.poolSurplusPolicy = (policy === "refund" || policy === "carryover") ? policy : "keep";
+    renderPool();
     scheduleSave();
   }
 
@@ -2226,6 +2440,8 @@
         }
         if (form.splitType === "custom") renderCustomShares();
         renderCategoryChipsOnly();
+        var hintBoxAfterReceipt = document.getElementById("category-hint");
+        if (hintBoxAfterReceipt) hintBoxAfterReceipt.innerHTML = buildCategoryHintHtml(descEl ? descEl.value : "", form.category);
         setReceiptStatus("영수증에서 읽었어요. 결제자·분배 대상을 확인하고 추가해 주세요.", false);
       })
       .catch(function (err) {
@@ -2475,12 +2691,7 @@
     showConfirmModal(
       '"' + tripName + '"의 현재 데이터를 붙여넣은 백업 내용으로 덮어쓸까요? 지금 화면의 내용은 사라져요.' + cloudWarningLine(currentTripId),
       function () {
-        state.members = Array.isArray(data.members) ? data.members : [];
-        state.expenses = Array.isArray(data.expenses) ? data.expenses : [];
-        state.poolEnabled = !!data.poolEnabled;
-        state.contributions = (data.contributions && typeof data.contributions === "object") ? data.contributions : {};
-        state.fxRates = (data.fxRates && typeof data.fxRates === "object") ? data.fxRates : {};
-        state.fxUpdatedAt = data.fxUpdatedAt || null;
+        applyLoadedData(data);
         prevMemberIds = [];
         syncFormWithMembers();
         resetExpenseForm();
@@ -2563,6 +2774,8 @@
     document.getElementById("member-chips").addEventListener("click", function (e) {
       var btn = e.target.closest("[data-remove-member]");
       if (btn) removeMember(btn.getAttribute("data-remove-member"));
+      var reactBtn = e.target.closest("[data-reactivate-member]");
+      if (reactBtn) reactivateMember(reactBtn.getAttribute("data-reactivate-member"));
     });
     document.getElementById("retro-prompt").addEventListener("click", function (e) {
       if (e.target.closest("[data-retro-apply]")) applyRetro();
@@ -2628,6 +2841,18 @@
     document.getElementById("pool-toggle-btn").addEventListener("click", togglePool);
     document.getElementById("pool-body").addEventListener("click", function (e) {
       if (e.target.id === "pool-autofill-btn") autofillPool();
+      var mgmtChip = e.target.closest("[data-pool-mgmt]");
+      if (mgmtChip) { setPoolManagementType(mgmtChip.getAttribute("data-pool-mgmt")); return; }
+      var surplusChip = e.target.closest("[data-pool-surplus]");
+      if (surplusChip) { setPoolSurplusPolicy(surplusChip.getAttribute("data-pool-surplus")); return; }
+    });
+    document.getElementById("pool-body").addEventListener("change", function (e) {
+      if (e.target.id === "pool-manager-select") {
+        if (guardLocked()) return;
+        state.poolManagerId = e.target.value;
+        renderPool();
+        scheduleSave();
+      }
     });
     document.getElementById("pool-body").addEventListener("input", function (e) {
       var el = e.target;
@@ -2653,6 +2878,8 @@
       if (t.id === "pool-split-apply-btn") { applyPoolSplitExpense(); return; }
       var catChip = t.closest("[data-set-category]");
       if (catChip) { setCategory(catChip.getAttribute("data-set-category")); return; }
+      var applyCatBtn = t.closest("[data-apply-category]");
+      if (applyCatBtn) { setCategory(applyCatBtn.getAttribute("data-apply-category")); return; }
       var pchip = t.closest("[data-toggle-participant]");
       if (pchip) { toggleParticipant(pchip.getAttribute("data-toggle-participant")); return; }
     });
@@ -2691,6 +2918,9 @@
           var label = document.getElementById("custom-total-label");
           if (label) label.textContent = formatCurrency(customTotal(), form.currency) + " / " + formatCurrency(toNumber(el.value), form.currency);
         }
+      } else if (el.id === "desc-input") {
+        var hintBox = document.getElementById("category-hint");
+        if (hintBox) hintBox.innerHTML = buildCategoryHintHtml(el.value, form.category);
       }
     });
 
@@ -2717,6 +2947,11 @@
       }
       if (e.target.id === "pool-deficit-apply-btn") {
         applyPoolDeficitEqualSplit();
+        return;
+      }
+      if (e.target.id === "total-breakdown-toggle-btn") {
+        showTotalBreakdown = !showTotalBreakdown;
+        renderSettlement();
         return;
       }
     });
