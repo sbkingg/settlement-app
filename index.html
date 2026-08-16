@@ -373,20 +373,15 @@
     });
   }
   var cloudSyncFailing = false; // 직전 클라우드 저장이 실패한 상태인지 (연속 실패 시 토스트 스팸 방지용)
-  function pushCloudUpdate(tripId, force) {
+  // 실제 Firestore set 호출 + 성공/실패 피드백을 담당하는 공용 내부 함수.
+  // payload에는 이번에 "진짜로 바뀐" 필드만 담겨야 한다 — merge:true라도 payload에 포함된
+  // 필드는 무조건 이 기기의 값으로 덮어써지기 때문에, 관련 없는 필드까지 매번 같이 실어 보내면
+  // 그 사이 다른 기기가 먼저 바꿔둔 값을 이 기기의 오래된 로컬 캐시로 되돌려버릴 수 있다.
+  function _cloudSetMerge(tripId, payload) {
     var ref = cloudDocRef(tripId);
     if (!ref) return;
-    var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
-    if (!force && entry && entry.status === "done") return; // 완료로 표시된 여행은 클라우드에도 더 이상 쓰지 않는다 (실수 방지)
-    ref.set({
-      tripName: entry ? entry.name : "",
-      startDate: entry ? (entry.startDate || "") : "",
-      endDate: entry ? (entry.endDate || "") : "",
-      status: entry ? (entry.status || "ongoing") : "ongoing",
-      editPassword: entry ? (entry.editPassword || DEFAULT_EDIT_PASSWORD) : DEFAULT_EDIT_PASSWORD,
-      data: JSON.stringify(state),
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true }).then(function () {
+    payload.updatedAt = firebase.firestore.FieldValue.serverTimestamp();
+    ref.set(payload, { merge: true }).then(function () {
       if (cloudSyncFailing) {
         cloudSyncFailing = false;
         showToast("☁ 클라우드 동기화가 다시 정상 작동해요.");
@@ -402,6 +397,35 @@
       }
       var el = document.getElementById("stat-save");
       if (el && tripId === currentTripId) el.textContent = "⚠ 클라우드 동기화 실패 (이 기기엔 저장됨)";
+    });
+  }
+  // 2026-08-16 추가: 지출/참여자/회비 등 "내용" 데이터만 올린다. 이름/날짜/완료상태/비밀번호는
+  // 절대 같이 안 건드린다 — 자동저장은 수시로(거의 모든 입력마다) 일어나기 때문에, 예전처럼
+  // 이 필드들까지 매번 같이 보내면 다른 기기가 방금 바꾼 이름/날짜가 조용히 예전 값으로
+  // 되돌아가는 사고가 났었다.
+  function pushCloudData(tripId, force) {
+    var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+    if (!force && entry && entry.status === "done") return; // 완료로 표시된 여행은 클라우드에도 더 이상 쓰지 않는다 (실수 방지)
+    _cloudSetMerge(tripId, { data: JSON.stringify(state) });
+  }
+  // 이름/날짜/완료상태/비밀번호 중 "실제로 이번에 바뀐" 필드만 올린다. fields는
+  // { tripName?, startDate?, endDate?, status?, editPassword? } 형태의 부분 객체.
+  function pushCloudMeta(tripId, fields, force) {
+    var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+    if (!force && entry && entry.status === "done") return;
+    _cloudSetMerge(tripId, fields);
+  }
+  // 여행을 처음 "클라우드로 공유하기" 할 때만 쓰는 전체 스냅샷 업로드. 이 시점엔 아직
+  // 아무도 클라우드 문서를 갖고 있지 않으므로(=경쟁할 상대가 없으므로) 통째로 올려도 안전하다.
+  function pushCloudFull(tripId) {
+    var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+    _cloudSetMerge(tripId, {
+      tripName: entry ? entry.name : "",
+      startDate: entry ? (entry.startDate || "") : "",
+      endDate: entry ? (entry.endDate || "") : "",
+      status: entry ? (entry.status || "ongoing") : "ongoing",
+      editPassword: entry ? (entry.editPassword || DEFAULT_EDIT_PASSWORD) : DEFAULT_EDIT_PASSWORD,
+      data: JSON.stringify(state)
     });
   }
   function isCloudTrip(id) {
@@ -420,7 +444,7 @@
     if (!entry) return;
     entry.cloud = true;
     saveTripsIndex();
-    pushCloudUpdate(tripId); // migrate current local data up as the initial cloud copy — 지금까지의 기록이 그대로 히스토리가 됨
+    pushCloudFull(tripId); // migrate current local data up as the initial cloud copy — 지금까지의 기록이 그대로 히스토리가 됨
     attachCloudListener(tripId);
     renderTripPanel();
     showCloudLinkModal(tripId);
@@ -631,7 +655,9 @@
       showToast("복구했어요: " + snap.member.name);
     }
     renderAll();
-    scheduleSave();
+    // 2026-08-16 수정: force=true — 삭제 직후 "완료로 표시"를 눌러 여행이 잠긴 상태에서
+    // 실행취소를 눌러도, 로컬만 되돌아가고 클라우드엔 조용히 반영이 안 되던 문제가 있었음.
+    scheduleSave(true);
     refreshUndoBar(); // stays open (with updated count) if more items remain, else hides
   }
 
@@ -869,7 +895,9 @@
   }
 
   var saveTimer = null;
-  function scheduleSave() {
+  // force=true는 지금까지 딱 한 군데(실행취소)에서만 쓴다: 완료(잠김) 여행이어도 로컬에서
+  // 이미 되돌린 내용은 클라우드에도 반드시 반영되어야, 이 기기만 다른 상태가 되는 걸 막을 수 있다.
+  function scheduleSave(force) {
     setSaveState("saving");
     if (saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(function () {
@@ -877,7 +905,7 @@
       var payload = JSON.stringify(state);
       storageSet(tripDataKey(currentTripId), payload).then(function () { setSaveState("saved"); });
       touchCurrentTripIndex();
-      if (!cloudApplyingRemote && isCloudTrip(currentTripId)) pushCloudUpdate(currentTripId);
+      if (!cloudApplyingRemote && isCloudTrip(currentTripId)) pushCloudData(currentTripId, force);
     }, 400);
   }
   function setSaveState(s) {
@@ -1000,7 +1028,7 @@
       entry.editPassword = newPw;
       entry.updatedAt = Date.now();
       saveTripsIndex();
-      if (isCloudTrip(entry.id)) pushCloudUpdate(entry.id, true);
+      if (isCloudTrip(entry.id)) pushCloudMeta(entry.id, { editPassword: entry.editPassword }, true);
       showToast("🔑 이 여행의 편집 비밀번호가 바뀌었어요.");
       renderTripPanel();
     });
@@ -1165,7 +1193,9 @@
     entry.endDate = endInput ? endInput.value : entry.endDate;
     entry.updatedAt = Date.now();
     saveTripsIndex();
-    if (isCloudTrip(entry.id) && !cloudApplyingRemote) pushCloudUpdate(entry.id);
+    if (isCloudTrip(entry.id) && !cloudApplyingRemote) {
+      pushCloudMeta(entry.id, { tripName: entry.name, startDate: entry.startDate || "", endDate: entry.endDate || "" });
+    }
     renderTripHeader();
     renderTripPanel();
     showToast("여행 정보를 저장했어요.");
@@ -1178,7 +1208,7 @@
       entry.status = willLock ? "done" : "ongoing";
       entry.updatedAt = Date.now();
       saveTripsIndex();
-      if (isCloudTrip(id)) pushCloudUpdate(id, true); // 완료/진행중 전환은 잠금 여부와 무관하게 즉시 클라우드에 알려야 함
+      if (isCloudTrip(id)) pushCloudMeta(id, { status: entry.status }, true); // 완료/진행중 전환은 잠금 여부와 무관하게 즉시 클라우드에 알려야 함
       renderTripHeader();
       renderTripPanel();
       renderAll();
