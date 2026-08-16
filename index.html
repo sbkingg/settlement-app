@@ -372,6 +372,7 @@
       // permission or network error — silently keep working offline
     });
   }
+  var cloudSyncFailing = false; // 직전 클라우드 저장이 실패한 상태인지 (연속 실패 시 토스트 스팸 방지용)
   function pushCloudUpdate(tripId, force) {
     var ref = cloudDocRef(tripId);
     if (!ref) return;
@@ -385,7 +386,23 @@
       editPassword: entry ? (entry.editPassword || DEFAULT_EDIT_PASSWORD) : DEFAULT_EDIT_PASSWORD,
       data: JSON.stringify(state),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true }).catch(function () {});
+    }, { merge: true }).then(function () {
+      if (cloudSyncFailing) {
+        cloudSyncFailing = false;
+        showToast("☁ 클라우드 동기화가 다시 정상 작동해요.");
+      }
+      var el = document.getElementById("stat-save");
+      if (el && tripId === currentTripId) el.textContent = "자동 저장됨";
+    }).catch(function () {
+      // 2026-08-16 수정: 예전엔 실패해도 완전히 조용히 무시돼서, 로컬엔 저장됐는데
+      // 클라우드(다른 가족 기기)엔 하나도 안 올라간 걸 아무도 몰랐던 문제가 있었음.
+      if (!cloudSyncFailing) {
+        cloudSyncFailing = true;
+        showToast("⚠ 클라우드 저장에 실패했어요. 이 기기엔 저장됐지만 다른 가족 기기엔 아직 안 갔을 수 있어요. 네트워크를 확인해 주세요.");
+      }
+      var el = document.getElementById("stat-save");
+      if (el && tripId === currentTripId) el.textContent = "⚠ 클라우드 동기화 실패 (이 기기엔 저장됨)";
+    });
   }
   function isCloudTrip(id) {
     var entry = tripsIndex.filter(function (t) { return t.id === id; })[0];
@@ -2830,6 +2847,15 @@
       var cardEl = e.target.closest("[data-card-trip]");
       if (cardEl) { switchTrip(cardEl.getAttribute("data-card-trip")); return; }
     });
+    // 2026-08-16 추가: 이름/날짜 입력칸은 버튼을 눌러야만 저장되는 구조라 깜빡하기 쉬웠음.
+    // 입력 후 다른 곳을 누르면(change/blur) 자동으로도 저장되게 해서, "입력은 했는데 버튼을
+    // 안 눌러서 로컬에도 클라우드에도 하나도 안 남는" 상황을 방지한다. (버튼은 그대로 남겨둠)
+    document.getElementById("trip-panel-body").addEventListener("change", function (e) {
+      var id = e.target.id;
+      if (id === "trip-start-date" || id === "trip-end-date" || id === "trip-rename-input") {
+        saveTripMeta();
+      }
+    });
     var banner = document.getElementById("startup-banner");
     if (banner) {
       banner.addEventListener("click", function (e) {
@@ -3071,6 +3097,14 @@
   // ---------- init ----------
   loadState(function () {
     handleIncomingCloudLink(function () {
+      // 2026-08-16 수정: 공유링크(?trip=) 없이 그냥 기본 주소로 열어도, 이미 로컬에 저장된
+      // 현재 여행이 "클라우드로 공유하기"가 켜진 여행이라면 실시간 리스너를 붙여서 최신 데이터
+      // (날짜 등)를 받아오게 한다. 예전에는 ?trip= 파라미터가 있을 때만 리스너가 붙어서, 이미
+      // 로컬에 캐시된 여행을 그냥 기본 주소로 재접속하면 다른 기기의 변경사항을 영영 못 받는
+      // 문제가 있었음.
+      if (currentTripId && isCloudTrip(currentTripId)) {
+        attachCloudListener(currentTripId);
+      }
       syncFormWithMembers();
       resetExpenseForm();
       initEvents();
