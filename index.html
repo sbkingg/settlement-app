@@ -156,6 +156,7 @@
           <div class="header-eyebrow">Travel Settlement</div>
           <div class="header-title">여행 정산</div>
         </div>
+        <button type="button" id="edit-lock-btn" class="no-print" style="border:none; border-radius:8px; padding:6px 10px; font-size:12px; font-weight:600; cursor:pointer; white-space:nowrap;">🔒 편집하기</button>
       </div>
       <div class="header-rule"></div>
       <div class="header-stats">
@@ -254,6 +255,7 @@
   <div id="confirm-overlay" class="no-print" style="display:none; position:fixed; inset:0; background:rgba(20,16,12,0.5); z-index:100; align-items:center; justify-content:center; padding:20px;">
     <div class="card" style="max-width:360px; width:100%; background:var(--paper);">
       <p id="confirm-message" style="font-size:14px; line-height:1.55; margin:2px 0 16px; white-space:pre-line;"></p>
+      <input type="password" id="confirm-password-input" style="display:none; width:100%; box-sizing:border-box; margin-bottom:14px; padding:9px 10px; border:1px solid var(--line); border-radius:8px; font-size:14px;" placeholder="비밀번호" />
       <div style="display:flex; gap:8px; justify-content:flex-end;">
         <button type="button" id="confirm-cancel-btn" class="btn btn-toggle" style="width:auto; padding:9px 16px;">취소</button>
         <button type="button" id="confirm-ok-btn" class="btn btn-stamp" style="width:auto; padding:9px 16px;">확인</button>
@@ -356,6 +358,10 @@
       if (entry) {
         entry.expenseCount = state.expenses.length;
         entry.updatedAt = Date.now();
+        if (typeof payload.startDate === "string") entry.startDate = payload.startDate;
+        if (typeof payload.endDate === "string") entry.endDate = payload.endDate;
+        if (typeof payload.status === "string") entry.status = payload.status;
+        if (typeof payload.editPassword === "string" && payload.editPassword) entry.editPassword = payload.editPassword;
         saveTripsIndex();
       }
       syncFormWithMembers();
@@ -366,12 +372,17 @@
       // permission or network error — silently keep working offline
     });
   }
-  function pushCloudUpdate(tripId) {
+  function pushCloudUpdate(tripId, force) {
     var ref = cloudDocRef(tripId);
     if (!ref) return;
     var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
+    if (!force && entry && entry.status === "done") return; // 완료로 표시된 여행은 클라우드에도 더 이상 쓰지 않는다 (실수 방지)
     ref.set({
       tripName: entry ? entry.name : "",
+      startDate: entry ? (entry.startDate || "") : "",
+      endDate: entry ? (entry.endDate || "") : "",
+      status: entry ? (entry.status || "ongoing") : "ongoing",
+      editPassword: entry ? (entry.editPassword || DEFAULT_EDIT_PASSWORD) : DEFAULT_EDIT_PASSWORD,
       data: JSON.stringify(state),
       updatedAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true }).catch(function () {});
@@ -455,7 +466,9 @@
       try { parsed = JSON.parse(payload.data); } catch (e) {}
       tripsIndex.push({
         id: tripId, name: payload.tripName || "공유받은 여행", createdAt: Date.now(), updatedAt: Date.now(),
-        expenseCount: parsed && parsed.expenses ? parsed.expenses.length : 0, status: "ongoing", startDate: "", endDate: "", cloud: true
+        expenseCount: parsed && parsed.expenses ? parsed.expenses.length : 0, status: payload.status || "ongoing",
+        startDate: payload.startDate || "", endDate: payload.endDate || "",
+        editPassword: payload.editPassword || DEFAULT_EDIT_PASSWORD, cloud: true
       });
       saveTripsIndex();
       currentTripId = tripId;
@@ -523,10 +536,26 @@
   function showConfirmModal(message, onConfirm, onCancel) {
     var overlay = document.getElementById("confirm-overlay");
     var msgEl = document.getElementById("confirm-message");
+    var pwInput = document.getElementById("confirm-password-input");
     if (!overlay || !msgEl) { if (onConfirm) onConfirm(); return; } // safety fallback
     msgEl.textContent = message;
+    if (pwInput) { pwInput.style.display = "none"; pwInput.value = ""; }
     overlay.style.display = "flex";
     confirmOkCallback = onConfirm || null;
+    confirmCancelCallback = onCancel || null;
+  }
+  // 편집 잠금 해제용 비밀번호 입력 모달. onConfirm(입력값)로 호출된다.
+  function showPasswordModal(message, onConfirm, onCancel) {
+    var overlay = document.getElementById("confirm-overlay");
+    var msgEl = document.getElementById("confirm-message");
+    var pwInput = document.getElementById("confirm-password-input");
+    if (!overlay || !msgEl || !pwInput) { return; }
+    msgEl.textContent = message;
+    pwInput.style.display = "block";
+    pwInput.value = "";
+    overlay.style.display = "flex";
+    setTimeout(function () { pwInput.focus(); }, 50);
+    confirmOkCallback = function () { if (onConfirm) onConfirm(pwInput.value); };
     confirmCancelCallback = onCancel || null;
   }
   function hideConfirmModal(runCancel) {
@@ -921,7 +950,49 @@
     var t = currentTripEntry();
     return !!(t && t.status === "done");
   }
+  // ---------- 편집 비밀번호 잠금 (여행별 개별 설정. 실수 방지용 — 진짜 보안 아님, 소스코드에 노출됨) ----------
+  var DEFAULT_EDIT_PASSWORD = "12!@"; // 여행에 비밀번호가 아직 없을 때(기존 여행 등)의 기본값
+  var editUnlockedTripIds = {}; // { tripId: true } — 세션(탭)당, 여행별로 한 번씩만 물어봄
+  function currentEditPassword() {
+    var entry = currentTripEntry();
+    return (entry && entry.editPassword) ? entry.editPassword : DEFAULT_EDIT_PASSWORD;
+  }
+  function isEditLocked() {
+    return !editUnlockedTripIds[currentTripId];
+  }
+  function requestUnlockEdit() {
+    if (!isEditLocked()) { return; }
+    var pw = currentEditPassword();
+    showPasswordModal("이 여행을 편집하려면 비밀번호를 입력해 주세요.", function (input) {
+      if (input === pw) {
+        editUnlockedTripIds[currentTripId] = true;
+        renderHeader();
+        renderTripPanel();
+        showToast("🔓 편집 가능 상태로 전환했어요.");
+      } else {
+        showToast("❌ 비밀번호가 틀렸어요. 관리자(대장님)에게 문의하세요.");
+      }
+    });
+  }
+  function changeEditPassword() {
+    if (guardLocked()) return; // 비밀번호를 바꾸려면 먼저 현재 비번을 알고 있어야 함(잠금 해제된 상태여야 함)
+    var entry = currentTripEntry();
+    if (!entry) return;
+    showPasswordModal("이 여행의 새 편집 비밀번호를 입력해 주세요.", function (newPw) {
+      if (!newPw) { showToast("비밀번호가 비어있어요. 변경 안 됐어요."); return; }
+      entry.editPassword = newPw;
+      entry.updatedAt = Date.now();
+      saveTripsIndex();
+      if (isCloudTrip(entry.id)) pushCloudUpdate(entry.id, true);
+      showToast("🔑 이 여행의 편집 비밀번호가 바뀌었어요.");
+      renderTripPanel();
+    });
+  }
   function guardLocked() {
+    if (isEditLocked()) {
+      showToast("🔒 편집하려면 위쪽 '편집하기' 버튼을 먼저 눌러주세요.");
+      return true;
+    }
     if (isTripLocked()) {
       showToast("🔒 완료된 여행이라 수정할 수 없어요. \"여행\" 패널에서 진행중으로 전환해 주세요.");
       return true;
@@ -1008,6 +1079,7 @@
         } else {
           html += '<button class="btn btn-toggle" style="font-size:12px; padding:6px 10px; width:auto;" data-cloud-share="' + t.id + '">☁ 클라우드로 공유하기 (실시간 동기화)</button>';
         }
+        html += ' <button class="btn btn-toggle" style="font-size:12px; padding:6px 10px; width:auto;" id="trip-change-password-btn">🔑 이 여행 비밀번호 변경</button>';
         html += '</div>';
       } else {
         html += '<div style="display:flex; gap:6px; margin-top:8px;">';
@@ -1050,10 +1122,11 @@
     var input = document.getElementById("new-trip-name-input");
     var name = (input && input.value.trim()) || "새 여행";
     var id = uid();
-    tripsIndex.push({ id: id, name: name, createdAt: Date.now(), updatedAt: Date.now(), expenseCount: 0, status: "ongoing", startDate: "", endDate: "" });
+    tripsIndex.push({ id: id, name: name, createdAt: Date.now(), updatedAt: Date.now(), expenseCount: 0, status: "ongoing", startDate: "", endDate: "", editPassword: DEFAULT_EDIT_PASSWORD });
     saveTripsIndex();
     currentTripId = id;
     saveCurrentTripPointer();
+    editUnlockedTripIds[id] = true; // 방금 만든 사람은 바로 편집 가능하게
     clearInMemoryState();
     syncFormWithMembers();
     resetExpenseForm();
@@ -1075,6 +1148,7 @@
     entry.endDate = endInput ? endInput.value : entry.endDate;
     entry.updatedAt = Date.now();
     saveTripsIndex();
+    if (isCloudTrip(entry.id) && !cloudApplyingRemote) pushCloudUpdate(entry.id);
     renderTripHeader();
     renderTripPanel();
     showToast("여행 정보를 저장했어요.");
@@ -1087,6 +1161,7 @@
       entry.status = willLock ? "done" : "ongoing";
       entry.updatedAt = Date.now();
       saveTripsIndex();
+      if (isCloudTrip(id)) pushCloudUpdate(id, true); // 완료/진행중 전환은 잠금 여부와 무관하게 즉시 클라우드에 알려야 함
       renderTripHeader();
       renderTripPanel();
       renderAll();
@@ -1176,6 +1251,19 @@
     document.getElementById("stat-members").textContent = "참여 " + state.members.length + "명";
     var total = state.expenses.reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
     document.getElementById("stat-total").textContent = "총 지출 " + formatWon(total);
+
+    var lockBtn = document.getElementById("edit-lock-btn");
+    if (lockBtn) {
+      if (!isEditLocked()) {
+        lockBtn.textContent = "🔓 편집 중";
+        lockBtn.style.background = "var(--brass)";
+        lockBtn.style.color = "#fff";
+      } else {
+        lockBtn.textContent = "🔒 편집하기";
+        lockBtn.style.background = "var(--paper-soft, #eee)";
+        lockBtn.style.color = "var(--ink-soft, #555)";
+      }
+    }
 
     var breakdown = document.getElementById("stat-pool-breakdown");
     if (breakdown) {
@@ -2726,6 +2814,7 @@
     document.getElementById("trip-panel-toggle-btn").addEventListener("click", toggleTripPanel);
     document.getElementById("trip-panel-body").addEventListener("click", function (e) {
       if (e.target.id === "trip-meta-save-btn") { saveTripMeta(); return; }
+      if (e.target.id === "trip-change-password-btn") { changeEditPassword(); return; }
       if (e.target.id === "new-trip-btn") { createNewTrip(); return; }
       var switchBtn = e.target.closest("[data-switch-trip]");
       if (switchBtn) { switchTrip(switchBtn.getAttribute("data-switch-trip")); return; }
@@ -2765,6 +2854,19 @@
     });
     document.getElementById("confirm-overlay").addEventListener("click", function (e) {
       if (e.target.id === "confirm-overlay") hideConfirmModal(true);
+    });
+    var pwInputEl = document.getElementById("confirm-password-input");
+    if (pwInputEl) {
+      pwInputEl.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") { document.getElementById("confirm-ok-btn").click(); }
+      });
+    }
+    document.getElementById("edit-lock-btn").addEventListener("click", function () {
+      if (!isEditLocked()) {
+        showToast("이미 이 여행은 편집 가능 상태예요.");
+        return;
+      }
+      requestUnlockEdit();
     });
 
     document.getElementById("add-member-btn").addEventListener("click", addMember);
