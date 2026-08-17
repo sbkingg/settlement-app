@@ -336,6 +336,78 @@
   }
   var cloudUnsubscribe = null;
   var cloudApplyingRemote = false;
+
+  // 2026-08-16 추가: 지출/참여자 "레코드 단위 병합" 유틸리티.
+  // 예전엔 지출·참여자 데이터를 JSON 통째로 덮어써서, 두 사람이 비슷한 시각에 각자 기기에서
+  // 서로 다른 지출을 추가하면 나중에 저장이 도착한 쪽이 먼저 쪽을 통째로 지워버리는 문제가 있었다.
+  // 이제는 두 쪽의 배열을 id 기준으로 합치고(union), 같은 id가 양쪽에 있으면 record.updatedAt이
+  // 더 최신인 쪽을 채택한다. 삭제는 배열에서 그냥 지우면 "상대방이 아직 갖고 있던 사본"과 합쳐질 때
+  // 되살아날 수 있어서, deletedExpenseIds에 짧게 남겨두는 tombstone 방식으로 처리한다 -- 단, 삭제
+  // 이후에 그 항목이 다시 수정(예: 실행취소)됐다면 수정 시각이 더 최신이므로 수정이 삭제를 이긴다.
+  // (계산/렌더링 코드는 전혀 건드리지 않는다 -- 병합 결과가 항상 평범한 expenses/members 배열이라
+  // 기존 정산 로직이 그대로 그 결과를 쓰면 된다.)
+  function mergeExpenseArrays(localExpenses, remoteExpenses, localDeleted, remoteDeleted) {
+    var tombstones = {};
+    (localDeleted || []).forEach(function (t) {
+      if (!t || !t.id) return;
+      if (!(t.id in tombstones) || t.deletedAt > tombstones[t.id]) tombstones[t.id] = t.deletedAt;
+    });
+    (remoteDeleted || []).forEach(function (t) {
+      if (!t || !t.id) return;
+      if (!(t.id in tombstones) || t.deletedAt > tombstones[t.id]) tombstones[t.id] = t.deletedAt;
+    });
+
+    var byId = {};
+    var order = [];
+    (localExpenses || []).forEach(function (e) {
+      if (!e || !e.id) return;
+      if (!(e.id in byId)) order.push(e.id);
+      byId[e.id] = e;
+    });
+    (remoteExpenses || []).forEach(function (e) {
+      if (!e || !e.id) return;
+      if (!(e.id in byId)) {
+        order.push(e.id);
+        byId[e.id] = e;
+      } else {
+        var lu = byId[e.id].updatedAt || 0, ru = e.updatedAt || 0;
+        if (ru > lu) byId[e.id] = e;
+      }
+    });
+
+    return order.map(function (id) { return byId[id]; }).filter(function (e) {
+      var td = tombstones[e.id];
+      if (td === undefined) return true;
+      return (e.updatedAt || 0) > td;
+    });
+  }
+  function mergeMemberArrays(localMembers, remoteMembers) {
+    var byId = {};
+    var order = [];
+    (localMembers || []).forEach(function (m) {
+      if (!m || !m.id) return;
+      if (!(m.id in byId)) order.push(m.id);
+      byId[m.id] = m;
+    });
+    (remoteMembers || []).forEach(function (m) {
+      if (!m || !m.id) return;
+      if (!(m.id in byId)) {
+        order.push(m.id);
+        byId[m.id] = m;
+      } else {
+        var lu = byId[m.id].updatedAt || 0, ru = m.updatedAt || 0;
+        if (ru > lu) byId[m.id] = m;
+      }
+    });
+    return order.map(function (id) { return byId[id]; });
+  }
+  function mergeDeletedIds(a, b) {
+    var map = {};
+    (a || []).forEach(function (t) { if (t && t.id) map[t.id] = Math.max(map[t.id] || 0, t.deletedAt || 0); });
+    (b || []).forEach(function (t) { if (t && t.id) map[t.id] = Math.max(map[t.id] || 0, t.deletedAt || 0); });
+    return Object.keys(map).map(function (id) { return { id: id, deletedAt: map[id] }; });
+  }
+
   function detachCloudListener() {
     if (cloudUnsubscribe) { try { cloudUnsubscribe(); } catch (e) {} cloudUnsubscribe = null; }
   }
@@ -352,8 +424,21 @@
       var parsed;
       try { parsed = JSON.parse(payload.data); } catch (e) { return; }
       cloudApplyingRemote = true;
-      applyLoadedData(parsed);
-      storageSet(tripDataKey(tripId), payload.data);
+      // 2026-08-16 수정: 통째로 덮어쓰지 않고 지출/참여자는 레코드 단위로 병합한다.
+      // 이 기기에 아직 서버로 못 올라간(디바운스 대기 중이거나 전송 중인) 로컬 변경이 있어도
+      // 이 병합 덕분에 사라지지 않는다. 그 외 필드(회비 on/off, 환율 등)는 기존처럼 원격 값을 그대로 반영.
+      state.expenses = mergeExpenseArrays(state.expenses, parsed.expenses, state.deletedExpenseIds, parsed.deletedExpenseIds);
+      state.members = mergeMemberArrays(state.members, parsed.members);
+      state.deletedExpenseIds = mergeDeletedIds(state.deletedExpenseIds, parsed.deletedExpenseIds);
+      state.poolEnabled = !!parsed.poolEnabled;
+      state.contributions = (parsed.contributions && typeof parsed.contributions === "object") ? parsed.contributions : state.contributions;
+      state.fxRates = (parsed.fxRates && typeof parsed.fxRates === "object") ? parsed.fxRates : state.fxRates;
+      state.fxUpdatedAt = parsed.fxUpdatedAt || state.fxUpdatedAt;
+      state.poolManagementType = (parsed.poolManagementType === "account") ? "account" : state.poolManagementType;
+      state.poolManagerId = parsed.poolManagerId || state.poolManagerId;
+      state.poolSurplusPolicy = parsed.poolSurplusPolicy || state.poolSurplusPolicy;
+      migrateLegacyPoolId();
+      storageSet(tripDataKey(tripId), JSON.stringify(state));
       var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
       if (entry) {
         entry.expenseCount = state.expenses.length;
@@ -403,10 +488,47 @@
   // 절대 같이 안 건드린다 — 자동저장은 수시로(거의 모든 입력마다) 일어나기 때문에, 예전처럼
   // 이 필드들까지 매번 같이 보내면 다른 기기가 방금 바꾼 이름/날짜가 조용히 예전 값으로
   // 되돌아가는 사고가 났었다.
+  // 2026-08-16 수정: 예전엔 이 기기가 알고 있는 state를 그대로 통째로 덮어썼다. 이제는 올리기 전에
+  // 먼저 클라우드의 최신 사본을 한 번 읽어와서, 지출/참여자를 레코드 단위로 병합한 뒤 올린다.
+  // 그래야 다른 기기가 방금 추가한, 아직 이 기기엔 없는 지출이 이 저장 때문에 사라지지 않는다.
   function pushCloudData(tripId, force) {
     var entry = tripsIndex.filter(function (t) { return t.id === tripId; })[0];
     if (!force && entry && entry.status === "done") return; // 완료로 표시된 여행은 클라우드에도 더 이상 쓰지 않는다 (실수 방지)
-    _cloudSetMerge(tripId, { data: JSON.stringify(state) });
+    var ref = cloudDocRef(tripId);
+    if (!ref) return;
+    var fallbackSnapshot = JSON.parse(JSON.stringify(state)); // 원격 조회 중 사용자가 다른 여행으로 이동해도 안전하도록 대비
+    ref.get().then(function (doc) {
+      var remote = null;
+      if (doc.exists) {
+        var payload = doc.data();
+        try { remote = (payload && typeof payload.data === "string") ? JSON.parse(payload.data) : null; } catch (e) { remote = null; }
+      }
+      if (tripId === currentTripId) {
+        // 조회하는 짧은 순간 사용자가 이 기기에서 추가로 입력했을 수 있으니, 고정된 스냅샷이 아니라
+        // "지금 이 순간의" state를 기준으로 병합한다 -- 그래야 방금 입력한 내용이 사라지지 않는다.
+        if (remote) {
+          state.expenses = mergeExpenseArrays(state.expenses, remote.expenses, state.deletedExpenseIds, remote.deletedExpenseIds);
+          state.members = mergeMemberArrays(state.members, remote.members);
+          state.deletedExpenseIds = mergeDeletedIds(state.deletedExpenseIds, remote.deletedExpenseIds);
+          syncFormWithMembers();
+          renderAll();
+        }
+        storageSet(tripDataKey(tripId), JSON.stringify(state));
+        _cloudSetMerge(tripId, { data: JSON.stringify(state) });
+      } else {
+        var merged = fallbackSnapshot;
+        if (remote) {
+          merged.expenses = mergeExpenseArrays(fallbackSnapshot.expenses, remote.expenses, fallbackSnapshot.deletedExpenseIds, remote.deletedExpenseIds);
+          merged.members = mergeMemberArrays(fallbackSnapshot.members, remote.members);
+          merged.deletedExpenseIds = mergeDeletedIds(fallbackSnapshot.deletedExpenseIds, remote.deletedExpenseIds);
+        }
+        _cloudSetMerge(tripId, { data: JSON.stringify(merged) });
+      }
+    }).catch(function () {
+      // 오프라인 등으로 원격 조회 자체가 실패하면, 예전처럼 이 기기가 알고 있는 최신 상태를 그대로 올린다
+      var current = (tripId === currentTripId) ? state : fallbackSnapshot;
+      _cloudSetMerge(tripId, { data: JSON.stringify(current) });
+    });
   }
   // 이름/날짜/완료상태/비밀번호 중 "실제로 이번에 바뀐" 필드만 올린다. fields는
   // { tripName?, startDate?, endDate?, status?, editPassword? } 형태의 부분 객체.
@@ -538,6 +660,7 @@
   var state = {
     members: [],
     expenses: [],
+    deletedExpenseIds: [], // [{id, deletedAt}] 최근 삭제한 지출의 짧은 기록 -- 다른 기기와 병합할 때 "삭제했는데 되살아나는" 걸 막는 용도(tombstone)
     poolEnabled: false,
     contributions: {},
     fxRates: {},       // { USD: "1380", IDR: "0.089" } -- KRW per 1 unit of that currency (string, like contributions)
@@ -645,7 +768,9 @@
     if (undoStack.length === 0) { hideUndoBar(); return; }
     var snap = undoStack.pop();
     if (snap.kind === "expense") {
+      snap.expense.updatedAt = Date.now(); // 복구도 "수정"으로 취급 -- 병합 시 삭제 tombstone을 이긴다
       state.expenses.push(snap.expense);
+      state.deletedExpenseIds = state.deletedExpenseIds.filter(function (t) { return t.id !== snap.expense.id; });
       showToast("복구했어요: " + snap.expense.desc);
     } else {
       state.members.push(snap.member);
@@ -880,6 +1005,7 @@
     hideUndoBar();
     state.members = [];
     state.expenses = [];
+    state.deletedExpenseIds = [];
     state.poolEnabled = false;
     state.contributions = {};
     state.fxRates = {};
@@ -916,6 +1042,7 @@
     if (!data || typeof data !== "object") return;
     state.members = Array.isArray(data.members) ? data.members : [];
     state.expenses = Array.isArray(data.expenses) ? data.expenses : [];
+    state.deletedExpenseIds = Array.isArray(data.deletedExpenseIds) ? data.deletedExpenseIds : [];
     state.poolEnabled = !!data.poolEnabled;
     state.contributions = (data.contributions && typeof data.contributions === "object") ? data.contributions : {};
     state.fxRates = (data.fxRates && typeof data.fxRates === "object") ? data.fxRates : {};
@@ -2283,7 +2410,7 @@
     var name = (input.value || "").trim();
     if (!name) return;
     if (state.members.some(function (m) { return m.name === name; })) return;
-    var newMember = { id: uid(), name: name };
+    var newMember = { id: uid(), name: name, updatedAt: Date.now() };
     state.members.push(newMember);
     input.value = "";
     syncFormWithMembers();
@@ -2360,6 +2487,7 @@
     var m = state.members.filter(function (x) { return x.id === id; })[0];
     if (!m) return;
     m.active = false;
+    m.updatedAt = Date.now();
     if (form.payerId === id) form.payerId = "";
     form.participants = form.participants.filter(function (p) { return p !== id; });
     renderAll();
@@ -2372,6 +2500,7 @@
     var m = state.members.filter(function (x) { return x.id === id; })[0];
     if (!m) return;
     m.active = true;
+    m.updatedAt = Date.now();
     renderAll();
     scheduleSave();
     showToast('"' + m.name + '"을(를) 다시 활성화했어요.');
@@ -2636,6 +2765,7 @@
           target.shares = shares;
           target.category = form.category;
           target.excludeFromSettlement = form.excludeFromSettlement;
+          target.updatedAt = Date.now(); // 다른 기기와 병합할 때 "누구 수정이 더 최신인지" 판단 기준
         }
         editingExpenseId = null;
       } else {
@@ -2648,7 +2778,8 @@
           splitType: form.splitType,
           shares: shares,
           category: form.category,
-          excludeFromSettlement: form.excludeFromSettlement
+          excludeFromSettlement: form.excludeFromSettlement,
+          updatedAt: Date.now()
         });
       }
 
@@ -2684,6 +2815,7 @@
     if (!target) return;
     showConfirmModal('"' + target.desc + '" 지출을 삭제할까요?', function () {
       state.expenses = state.expenses.filter(function (e) { return e.id !== id; });
+      state.deletedExpenseIds.push({ id: id, deletedAt: Date.now() }); // 다른 기기와 병합 시 이 삭제가 "되살아나지" 않도록 기록
       if (editingExpenseId === id) {
         editingExpenseId = null;
         resetExpenseForm();
