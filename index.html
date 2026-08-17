@@ -186,6 +186,7 @@
         <button class="btn btn-dark" id="add-member-btn">추가</button>
       </div>
       <div id="retro-prompt" style="display:none; margin-top:10px;"></div>
+      <div id="whoami-box" style="margin-top:10px;"></div>
     </section>
 
     <section class="print-only" id="print-members-section">
@@ -471,8 +472,7 @@
         cloudSyncFailing = false;
         showToast("☁ 클라우드 동기화가 다시 정상 작동해요.");
       }
-      var el = document.getElementById("stat-save");
-      if (el && tripId === currentTripId) el.textContent = "자동 저장됨";
+      if (tripId === currentTripId) renderSaveStatus();
     }).catch(function () {
       // 2026-08-16 수정: 예전엔 실패해도 완전히 조용히 무시돼서, 로컬엔 저장됐는데
       // 클라우드(다른 가족 기기)엔 하나도 안 올라간 걸 아무도 몰랐던 문제가 있었음.
@@ -480,8 +480,7 @@
         cloudSyncFailing = true;
         showToast("⚠ 클라우드 저장에 실패했어요. 이 기기엔 저장됐지만 다른 가족 기기엔 아직 안 갔을 수 있어요. 네트워크를 확인해 주세요.");
       }
-      var el = document.getElementById("stat-save");
-      if (el && tripId === currentTripId) el.textContent = "⚠ 클라우드 동기화 실패 (이 기기엔 저장됨)";
+      if (tripId === currentTripId) renderSaveStatus();
     });
   }
   // 2026-08-16 추가: 지출/참여자/회비 등 "내용" 데이터만 올린다. 이름/날짜/완료상태/비밀번호는
@@ -965,6 +964,43 @@
     if (!hasLocalStorage()) return;
     try { window.localStorage.setItem(key, value); } catch (e) {}
   }
+  // 2026-08-16 추가: "이 기기가 누구인지"를 참고용으로만 기록한다. 권한을 제한하는 용도가
+  // 아니라, 정산 중 "이거 누가 입력한 거지?" 싶을 때 지출 항목 옆에 이름을 보여주기 위한 용도.
+  // 여행마다 기기(브라우저)에 로컬로만 저장되고 클라우드로 동기화되지 않으며, 안 정해도 무방하다.
+  function whoAmIKey(tripId) { return "settle:whoami:" + tripId; }
+  function getWhoAmI() {
+    if (!currentTripId) return "";
+    var v = storageGetLocal(whoAmIKey(currentTripId));
+    if (v && !state.members.some(function (m) { return m.id === v; })) return ""; // 삭제된 참여자면 무시
+    return v || "";
+  }
+  function setWhoAmI(memberId) {
+    if (!currentTripId) return;
+    storageSetLocal(whoAmIKey(currentTripId), memberId || "");
+  }
+  function changeWhoAmI() {
+    var sel = document.getElementById("whoami-select");
+    if (!sel) return;
+    setWhoAmI(sel.value);
+    if (sel.value) {
+      var m = state.members.filter(function (x) { return x.id === sel.value; })[0];
+      if (m) showToast("'" + m.name + "'(으)로 표시돼요. 지출 항목에 참고용으로만 남아요.");
+    }
+  }
+  function renderWhoAmI() {
+    var box = document.getElementById("whoami-box");
+    if (!box) return;
+    if (state.members.length === 0) { box.innerHTML = ""; return; }
+    var current = getWhoAmI();
+    var options = '<option value="">(선택 안 함)</option>' + state.members.map(function (m) {
+      return '<option value="' + m.id + '"' + (current === m.id ? " selected" : "") + '>' + esc(m.name) + '</option>';
+    }).join("");
+    box.innerHTML =
+      '<div style="display:flex; align-items:center; gap:6px; font-size:12px; color:var(--ink-soft); flex-wrap:wrap;">' +
+      '<span>이 기기는 누구? (참고용, 안 정해도 무방)</span>' +
+      '<select id="whoami-select" style="font-size:12px; padding:3px 6px;">' + options + '</select>' +
+      '</div>';
+  }
   function storageDelete(key) {
     if (hasClaudeStorage()) {
       return window.storage.delete(key, false).catch(function () { storageDeleteLocal(key); });
@@ -1034,9 +1070,21 @@
       if (!cloudApplyingRemote && isCloudTrip(currentTripId)) pushCloudData(currentTripId, force);
     }, 400);
   }
+  // 2026-08-16 수정: 예전엔 로컬저장 완료 콜백과 클라우드저장 성공/실패 콜백이 각자
+  // #stat-save 텍스트를 직접 덮어써서, 둘의 도착 순서에 따라 클라우드 저장 실패 경고가
+  // 로컬저장 완료 표시("자동 저장됨")에 조용히 가려질 수 있었다. 이제는 "로컬 저장 중인지"와
+  // "클라우드 동기화 실패 상태인지" 두 사실을 한 함수(renderSaveStatus)에서 합쳐서 표시한다.
+  var localSaveState = "saved"; // "saving" | "saved"
   function setSaveState(s) {
+    localSaveState = s;
+    renderSaveStatus();
+  }
+  function renderSaveStatus() {
     var el = document.getElementById("stat-save");
-    if (el) el.textContent = s === "saving" ? "저장 중…" : "자동 저장됨";
+    if (!el) return;
+    if (localSaveState === "saving") { el.textContent = "저장 중…"; return; }
+    if (!currentTripId || !isCloudTrip(currentTripId)) { el.textContent = "자동 저장됨"; return; }
+    el.textContent = cloudSyncFailing ? "⚠ 클라우드 동기화 실패 (이 기기엔 저장됨)" : "자동 저장됨 · ☁ 동기화됨";
   }
   function applyLoadedData(data) {
     if (!data || typeof data !== "object") return;
@@ -1412,6 +1460,7 @@
     renderTripHeader();
     renderHeader();
     renderMembers();
+    renderWhoAmI();
     renderFx();
     renderPool();
     renderExpenseForm();
@@ -1425,6 +1474,9 @@
     document.getElementById("stat-members").textContent = "참여 " + state.members.length + "명";
     var total = state.expenses.reduce(function (s, e) { return s + toKRW(e.amount, e.currency || "KRW"); }, 0);
     document.getElementById("stat-total").textContent = "총 지출 " + formatWon(total);
+    renderSaveStatus(); // 여행을 전환해도 그 여행의 클라우드 동기화 상태가 곧바로 정확히 반영되도록
+
+
 
     var lockBtn = document.getElementById("edit-lock-btn");
     if (lockBtn) {
@@ -1956,6 +2008,15 @@
       var locked = isTripLocked();
       var amountLabel = formatCurrency(e.amount, cur) +
         (cur !== "KRW" ? ' <span class="muted" style="font-size:11px;">(≈' + formatWon(toKRW(e.amount, cur)) + ')</span>' : '');
+      // 참고용 입력자 표시 -- 권한과 무관, 선택 안 했으면(레거시 데이터 포함) 그냥 표시 안 함
+      var createdByMember = e.createdBy ? state.members.filter(function (m) { return m.id === e.createdBy; })[0] : null;
+      var updatedByMember = (e.updatedBy && e.updatedBy !== e.createdBy) ? state.members.filter(function (m) { return m.id === e.updatedBy; })[0] : null;
+      var attributionParts = [];
+      if (createdByMember) attributionParts.push(esc(createdByMember.name) + " 입력");
+      if (updatedByMember) attributionParts.push(esc(updatedByMember.name) + " 수정");
+      var attributionLine = attributionParts.length
+        ? '<div class="meta" style="margin-top:2px; opacity:0.65;">' + attributionParts.join(" · ") + '</div>'
+        : '';
       return '<div class="card expense-item' + (isEditing ? " editing" : "") + '">' +
         (locked ? '' :
         '<div class="reorder-col">' +
@@ -1965,7 +2026,7 @@
         '<div style="flex:1; min-width:0;"><div class="desc">' + esc(e.desc) + ' <span class="badge">' + esc(cat) + '</span>' +
         (badgeLabel ? ' <span class="badge" style="background:var(--stamp-soft); color:var(--stamp);">' + badgeLabel + '</span>' : '') + '</div>' +
         '<div class="meta">' + esc(memberName(e.payerId)) + ' 결제 · ' + (excluded ? "정산 제외" : (e.splitType === "equal" ? "균등분배" : "실사용분")) + '</div>' +
-        '<div class="meta" style="margin-top:2px;">' + namesDetail + '</div></div>' +
+        '<div class="meta" style="margin-top:2px;">' + namesDetail + '</div>' + attributionLine + '</div>' +
         '<div class="right" style="align-items:flex-start;">' +
         '<span class="mono" style="font-size:14px; white-space:nowrap;">' + amountLabel + '</span>' +
         (locked ? '' :
@@ -2766,9 +2827,12 @@
           target.category = form.category;
           target.excludeFromSettlement = form.excludeFromSettlement;
           target.updatedAt = Date.now(); // 다른 기기와 병합할 때 "누구 수정이 더 최신인지" 판단 기준
+          var whoEdit = getWhoAmI();
+          if (whoEdit) target.updatedBy = whoEdit; // 참고용 표시 -- 권한 제한 아님
         }
         editingExpenseId = null;
       } else {
+        var whoNew = getWhoAmI();
         state.expenses.push({
           id: uid(),
           desc: desc,
@@ -2779,7 +2843,8 @@
           shares: shares,
           category: form.category,
           excludeFromSettlement: form.excludeFromSettlement,
-          updatedAt: Date.now()
+          updatedAt: Date.now(),
+          createdBy: whoNew || undefined // 참고용 표시 -- 권한 제한 아님, 선택 안 했으면 그냥 비워둠
         });
       }
 
@@ -3066,6 +3131,9 @@
       if (btn) removeMember(btn.getAttribute("data-remove-member"));
       var reactBtn = e.target.closest("[data-reactivate-member]");
       if (reactBtn) reactivateMember(reactBtn.getAttribute("data-reactivate-member"));
+    });
+    document.getElementById("whoami-box").addEventListener("change", function (e) {
+      if (e.target.id === "whoami-select") changeWhoAmI();
     });
     document.getElementById("retro-prompt").addEventListener("click", function (e) {
       if (e.target.closest("[data-retro-apply]")) applyRetro();
